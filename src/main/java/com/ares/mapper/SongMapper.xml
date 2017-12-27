@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="com.ares.mapper.SongMapper">
+
+    <resultMap id="SongEntity" type="com.ares.entity.SongEntity">
+
+        <result property="songId" column="song_id"/>
+        <result property="songName" column="song_name"/>
+        <result property="singerId" column="singer_id"/>
+
+    </resultMap>
+
+    <resultMap id="LyricEntity" type="com.ares.entity.LyricEntity">
+
+        <result property="songId" column="song_id"/>
+        <result property="songName" column="song_name"/>
+        <result property="lyricContent" column="lyric_content"/>
+
+    </resultMap>
+
+
+    <resultMap id="SongEmotionEntity" type="com.ares.entity.SongEmotionEntity">
+
+        <result property="songId" column="song_id"/>
+        <result property="songName" column="song_name"/>
+        <result property="positive" column="positive"/>
+        <result property="negative" column="negative"/>
+
+    </resultMap>
+
+
+
+
+    <select id="getSongListBySingerId" resultMap="SongEntity">
+
+          <![CDATA[
+        SELECT * FROM `tbl_song`
+        WHERE `singer_id` = #{singerId, jdbcType=VARCHAR}
+        ]]>
+    </select>
+
+    <insert id="insertSong">
+
+        <![CDATA[
+        INSERT IGNORE INTO  `tbl_song` (
+        `song_id`,
+        `song_name`,
+        `singer_id`
+        ) VALUES (
+        #{songId, jdbcType=VARCHAR} ,
+        #{songName, jdbcType=VARCHAR} ,
+        #{singerId, jdbcType=VARCHAR}
+        )
+
+
+        ]]>
+    </insert>
+
+
+    <insert id="insertLyric">
+
+        <![CDATA[
+        INSERT IGNORE INTO  `tbl_lyric` (
+        `song_id`,
+        `song_name`,
+        `lyric_content`
+        ) VALUES (
+        #{songId, jdbcType=VARCHAR} ,
+        #{songName, jdbcType=VARCHAR} ,
+        #{lyricContent, jdbcType=VARCHAR}
+
+        )
+        ]]>
+    </insert>
+
+
+    <select id="findLyricBySongId" resultMap="LyricEntity">
+
+
+          <![CDATA[
+        SELECT * FROM `tbl_lyric`
+        WHERE `song_id` = #{songId, jdbcType=VARCHAR}
+        ]]>
+
+    </select>
+
+
+    <insert id="insertSongEmotion">
+
+
+        <![CDATA[
+
+         INSERT IGNORE INTO  `tbl_song_emotion` (
+        `song_id`,
+        `song_name`,
+        `positive`,
+        `negative`
+        ) VALUES (
+        #{songId, jdbcType=VARCHAR} ,
+        #{songName, jdbcType=VARCHAR} ,
+        #{positive, jdbcType=DOUBLE} ,
+        #{negative, jdbcType=DOUBLE}
+
+        )
+
+        ]]>
+    </insert>
+
+
+    <select id="findSongEmotionBySongId" resultMap="SongEmotionEntity">
+
+
+        <![CDATA[
+        SELECT * FROM `tbl_song_emotion`
+        WHERE `song_id` = #{songId, jdbcType=VARCHAR}
+        ]]>
+
+    </select>
+
+
+</mapper>
+
