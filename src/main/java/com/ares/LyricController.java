@@ -1,12 +1,14 @@
 package com.ares;
 
 import com.ares.entity.LyricEntity;
+import com.ares.entity.SingerEntity;
 import com.ares.entity.SongEmotionEntity;
 import com.ares.entity.SongEntity;
 import com.ares.http.LexicalAnalysisResult;
 import com.ares.http.RetrofitServiceManager;
 import com.ares.http.TextSentimentResult;
 import com.ares.service.LyricService;
+import com.ares.service.SingerService;
 import com.ares.service.SongEmotionService;
 import com.ares.service.SongService;
 import com.google.gson.Gson;
@@ -55,6 +57,9 @@ public class LyricController {
 
     @Autowired
     LyricService lyricService;
+
+    @Autowired
+    SingerService singerService;
 
     @Value(value = "${qcloud.api.secretId}")
     private String secretId;
@@ -413,69 +418,101 @@ public class LyricController {
         //搜索歌手
         objectMap.put("type", 100);
 
-        return RetrofitServiceManager.getManager().create(LyricApi.class)
-                .search("http://music.163.com/api/search/pc", objectMap).flatMap(searchResult -> {
 
-                    wb = new HSSFWorkbook();
-                    sheet = wb.createSheet("表1");
+        SingerEntity singerEntity1 = singerService.getSingerByName(singer);
+        Flowable<String> flowable;
+        if (singerEntity1 != null&&singerEntity1.getId()!=null) {
 
-                    HSSFRow row = sheet.createRow(0);
-                    HSSFCell cell = row.createCell(0);
-                    HSSFCell cell2 = row.createCell(1);
-                    HSSFCell cell3 = row.createCell(2);
+            flowable = Flowable.just(singerEntity1.getId());
 
-                    cell.setCellValue("歌名");
-                    cell2.setCellValue("积极占比%");
-                    cell3.setCellValue("消极占比%");
-
-                    List<SearchResult.ResultBean.ArtistsBean> artistsBeanList = searchResult.getResult().getArtists();
+        } else {
+            flowable = RetrofitServiceManager.getManager().create(LyricApi.class)
+                    .search("http://music.163.com/api/search/pc", objectMap).flatMap(searchResult -> {
 
 
-                    currentSingerId = 19020;//默认值
-                    if (artistsBeanList != null && artistsBeanList.size() > 0) {
-                        currentSingerId = artistsBeanList.get(0).getId();
-                    }
-
-                    List<SongEntity> songListFromDb = songService.findSongList(currentSingerId + "");
-
-                    if (songListFromDb != null && songListFromDb.size() > 0) {
-
-                        List<Song> songList = new ArrayList<>();
-                        for (SongEntity songEntity : songListFromDb) {
-
-                            songList.add(new Song(songEntity.getSongName(), songEntity.getSongId()));
-                        }
-                        return Flowable.just(songList);
-
-                    }
-
-                    final List<Song> streamSongs = new ArrayList<>();
-                    Jsoup.connect("http://music.163.com/artist?id=" + currentSingerId).timeout(10000)
-                            .header("Referer", "http://music.163.com/")
-                            .header("Host", "music.163.com").get().select("ul[class=f-hide] a")
-                            .stream()
-                            .map(element -> {
 
 
-                                String href = element.attr("href");
-                                String songId = href.substring(href.indexOf("id=") + 3, href.length());
-                                //插入数据库
-                                songService.insertSong(songId, element.text(), currentSingerId + "");
-                                Song song = new Song(element.text(), songId);
-                                return song;
-                            }).forEach(new java.util.function.Consumer<Song>() {
-                        @Override
-                        public void accept(Song song) {
-                            streamSongs.add(song);
+                        List<SearchResult.ResultBean.ArtistsBean> artistsBeanList = searchResult.getResult().getArtists();
+                        currentSingerId = 19020;//默认值
+                        if (artistsBeanList != null && artistsBeanList.size() > 0) {
+                            SearchResult.ResultBean.ArtistsBean artistsBean = artistsBeanList.get(0);
+                            currentSingerId = artistsBeanList.get(0).getId();
+                            SingerEntity singerEntity = singerService.getSingerById(currentSingerId + "");
+                            if (singerEntity == null) {
+                                singerEntity = new SingerEntity();
+                                singerEntity.setId(artistsBean.getId() + "");
+                                singerEntity.setAlbumSize(artistsBean.getAlbumSize());
+                                singerEntity.setFollowed(artistsBean.isFollowed());
+                                singerEntity.setImg1v1Url(artistsBean.getImg1v1Url());
+                                singerEntity.setMvSize(artistsBean.getMvSize());
+                                singerEntity.setName(artistsBean.getName());
+                                singerEntity.setPicId(artistsBean.getPicId());
+                                singerEntity.setPicUrl(artistsBean.getPicUrl());
+
+                                singerService.insertSinger(singerEntity);
+
+
+                            }
 
                         }
+
+                        return Flowable.just(currentSingerId + "");
                     });
+        }
+
+        return flowable.flatMap(new Function<String, Publisher< List<Song>>>() {
+            @Override
+            public Publisher<List<Song>> apply(@NonNull String singerId) throws Exception {
+
+                wb = new HSSFWorkbook();
+                sheet = wb.createSheet("表1");
+
+                HSSFRow row = sheet.createRow(0);
+                HSSFCell cell = row.createCell(0);
+                HSSFCell cell2 = row.createCell(1);
+                HSSFCell cell3 = row.createCell(2);
+
+                cell.setCellValue("歌名");
+                cell2.setCellValue("积极占比%");
+                cell3.setCellValue("消极占比%");
+
+                List<SongEntity> songListFromDb = songService.findSongList(singerId);
+
+                if (songListFromDb != null && songListFromDb.size() > 0) {
+
+                    List<Song> songList = new ArrayList<>();
+                    for (SongEntity songEntity : songListFromDb) {
+
+                        songList.add(new Song(songEntity.getSongName(), songEntity.getSongId()));
+                    }
+                    return Flowable.just(songList);
+
+                }
+
+                final List<Song> streamSongs = new ArrayList<>();
+                Jsoup.connect("http://music.163.com/artist?id=" + singerId).timeout(10000)
+                        .header("Referer", "http://music.163.com/")
+                        .header("Host", "music.163.com").get().select("ul[class=f-hide] a")
+                        .stream()
+                        .map(element -> {
 
 
-                    return Flowable.just(streamSongs);
+                            String href = element.attr("href");
+                            String songId = href.substring(href.indexOf("id=") + 3, href.length());
+                            //插入数据库
+                            songService.insertSong(songId, element.text(), singerId );
+                            Song song = new Song(element.text(), songId);
+                            return song;
+                        }).forEach(new java.util.function.Consumer<Song>() {
+                    @Override
+                    public void accept(Song song) {
+                        streamSongs.add(song);
 
-                })
-
+                    }
+                });
+                return Flowable.just(streamSongs);
+            }
+        })
                 .flatMap(songStream -> {
 //                            List<Song> listSong = new ArrayList<>();
 //
@@ -633,7 +670,7 @@ public class LyricController {
     private TextSentimentResult mTextSentimentResult;
 
     @RequestMapping("/analysis/song")
-    public TextSentimentResult getTheAnalysisResult(@RequestParam(value = "songId") String songId,@RequestParam(value = "songName") String songName) {
+    public TextSentimentResult getTheAnalysisResult(@RequestParam(value = "songId") String songId, @RequestParam(value = "songName") String songName) {
 
 
         //如果数据库有
@@ -669,7 +706,7 @@ public class LyricController {
             public void accept(TextSentimentResult textSentimentResult) throws Exception {
 
                 mTextSentimentResult = textSentimentResult;
-                emotionService.insertSongEmotion(songId,songName,textSentimentResult.getPositive(),textSentimentResult.getNegative());
+                emotionService.insertSongEmotion(songId, songName, textSentimentResult.getPositive(), textSentimentResult.getNegative());
             }
         });
 

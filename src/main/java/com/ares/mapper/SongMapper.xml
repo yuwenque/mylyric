@@ -32,7 +32,61 @@
     </resultMap>
 
 
+    <resultMap id="SingerEntity" type="com.ares.entity.SingerEntity">
 
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="picUrl" column="pic_url"/>
+        <result property="picId" column="pic_id"/>
+        <result property="albumSize" column="album_size"/>
+        <result property="img1v1Url" column="img1v1_url"/>
+        <result property="mvSize" column="mv_size"/>
+        <result property="followed" column="followed"/>
+
+    </resultMap>
+
+    <insert id="insertSinger">
+
+        <![CDATA[
+
+         INSERT IGNORE INTO  `tbl_singer` (
+        `id`,
+        `name`,
+        `pic_url`,
+        `pic_id`,
+        `album_size`,`img1v1_url`,`mv_size`,`followed`
+        ) VALUES (
+        #{id, jdbcType=VARCHAR} ,
+        #{name, jdbcType=VARCHAR} ,
+        #{picUrl, jdbcType=VARCHAR},
+        #{picId, jdbcType=VARCHAR},
+        #{albumSize, jdbcType=INTEGER} ,
+        #{img1v1Url, jdbcType=VARCHAR} ,
+        #{mvSize, jdbcType=INTEGER} ,
+        #{followed, jdbcType=BOOLEAN}
+        )
+
+        ]]>
+
+    </insert>
+
+    <select id="getSingerById" resultMap="SingerEntity">
+
+          <![CDATA[
+        SELECT * from `tbl_singer`
+        WHERE `id`=#{id,jdbcType=VARCHAR}
+
+        ]]>
+    </select>
+
+    <select id="getSingerByName" resultMap="SingerEntity">
+
+          <![CDATA[
+        SELECT * from `tbl_singer`
+        WHERE `name` like  concat('%',concat(#{name,jdbcType=VARCHAR},'%'))
+
+        ]]>
+    </select>
 
     <select id="getSongListBySingerId" resultMap="SongEntity">
 
