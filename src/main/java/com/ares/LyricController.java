@@ -408,9 +408,8 @@ public class LyricController {
         return list;
     }
 
-    private int currentSingerId;
 
-    public Flowable<Song> getSong(String singer) {
+    private Flowable<Song> getSong(String singer) {
 
 
         Map<String, Object> objectMap = new HashMap<>();
@@ -433,7 +432,7 @@ public class LyricController {
 
 
                         List<SearchResult.ResultBean.ArtistsBean> artistsBeanList = searchResult.getResult().getArtists();
-                        currentSingerId = 19020;//默认值
+                       int currentSingerId = 19020;//默认值
                         if (artistsBeanList != null && artistsBeanList.size() > 0) {
                             SearchResult.ResultBean.ArtistsBean artistsBean = artistsBeanList.get(0);
                             currentSingerId = artistsBeanList.get(0).getId();
@@ -572,7 +571,7 @@ public class LyricController {
 
 
     /**
-     * 去除歌词里面的一些
+     * 去除歌词里面的一些无用信息
      *
      * @param lyricContent
      * @return
@@ -719,7 +718,7 @@ public class LyricController {
 
         List<Song> list = new ArrayList<>();
 
-        List<SongEntity> songListFromDb = songService.findSongList(currentSingerId + "");
+        List<SongEntity> songListFromDb = songService.findSongList(id );
 
         if (songListFromDb != null && songListFromDb.size() > 0) {
 
