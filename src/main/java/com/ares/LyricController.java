@@ -134,7 +134,7 @@ public class LyricController {
                     = new LyricEmotion();
             emotion.setSongName(song.getName());
             emotion.setEmotion(lexicalAnalysisResult);
-            if(lexicalAnalysisResult.getNegative()!=0&&lexicalAnalysisResult.getPositive()!=0){
+            if((lexicalAnalysisResult.getNegative()!=0||lexicalAnalysisResult.getNegative()!=1)&&(lexicalAnalysisResult.getPositive()!=0||lexicalAnalysisResult.getPositive()!=1)){
                 emotionService.insertSongEmotion(song.getSongId(), song.getName(), lexicalAnalysisResult.getPositive(), lexicalAnalysisResult.getNegative());
             }
 
@@ -144,7 +144,7 @@ public class LyricController {
         }).subscribe((emotion -> {
 
 
-            if(emotion.getEmotion().getNegative()!=0&&emotion.getEmotion().getPositive()!=0){
+            if((emotion.getEmotion().getNegative()!=0||emotion.getEmotion().getNegative()!=1)&&(emotion.getEmotion().getPositive()!=0||emotion.getEmotion().getPositive()!=1)){
 
                 resultList.add(emotion);
             }
