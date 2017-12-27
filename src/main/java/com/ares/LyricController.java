@@ -134,7 +134,9 @@ public class LyricController {
                     = new LyricEmotion();
             emotion.setSongName(song.getName());
             emotion.setEmotion(lexicalAnalysisResult);
-            emotionService.insertSongEmotion(song.getSongId(), song.getName(), lexicalAnalysisResult.getPositive(), lexicalAnalysisResult.getNegative());
+            if(lexicalAnalysisResult.getNegative()!=0&&lexicalAnalysisResult.getPositive()!=0){
+                emotionService.insertSongEmotion(song.getSongId(), song.getName(), lexicalAnalysisResult.getPositive(), lexicalAnalysisResult.getNegative());
+            }
 
 
             return Flowable.just(emotion);
@@ -558,7 +560,10 @@ public class LyricController {
                         Song song = new Song(songOri.getName(), songOri.getSongId());
                         song.setLyricContent(handleTheLyricContent(songLyricPair.getValue().getLrc().getLyric()));
                         //插入数据库
-                        lyricService.insertLyric(song.getSongId(), song.getName(), song.getLyricContent());
+                        if(song.getLyricContent()!=null&&song.getLyricContent().length()>0){
+
+                            lyricService.insertLyric(song.getSongId(), song.getName(), song.getLyricContent());
+                        }
                         return song;
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -705,7 +710,10 @@ public class LyricController {
             public void accept(TextSentimentResult textSentimentResult) throws Exception {
 
                 mTextSentimentResult = textSentimentResult;
-                emotionService.insertSongEmotion(songId, songName, textSentimentResult.getPositive(), textSentimentResult.getNegative());
+                if(textSentimentResult.getPositive()!=0&&textSentimentResult.getNegative()!=0){
+
+                    emotionService.insertSongEmotion(songId, songName, textSentimentResult.getPositive(), textSentimentResult.getNegative());
+                }
             }
         });
 
