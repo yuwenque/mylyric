@@ -144,7 +144,10 @@ public class LyricController {
         }).subscribe((emotion -> {
 
 
-            resultList.add(emotion);
+            if(emotion.getEmotion().getNegative()!=0&&emotion.getEmotion().getPositive()!=0){
+
+                resultList.add(emotion);
+            }
             if (emotion.getSongName() != null && emotion.getSongName().length() > 0) {
 
                 HSSFRow row = sheet.createRow(songCount + 1);
