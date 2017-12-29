@@ -8,6 +8,7 @@ import com.ares.http.TextSentimentResult;
 public class LyricEmotion {
 
 
+    private String songId;
     private String songName;
     private TextSentimentResult emotion;
 
@@ -17,6 +18,14 @@ public class LyricEmotion {
 
     public void setSongName(String songName) {
         this.songName = songName;
+    }
+
+    public String getSongId() {
+        return songId;
+    }
+
+    public void setSongId(String songId) {
+        this.songId = songId;
     }
 
     public TextSentimentResult getEmotion() {

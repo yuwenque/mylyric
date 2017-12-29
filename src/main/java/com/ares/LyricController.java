@@ -12,6 +12,7 @@ import com.ares.service.SingerService;
 import com.ares.service.SongEmotionService;
 import com.ares.service.SongService;
 import com.google.gson.Gson;
+import com.gzkit.jaguar.core.beans.DefaultResultBean;
 import com.qcloud.Module.Base;
 import com.qcloud.QcloudApiModuleCenter;
 import io.reactivex.Flowable;
@@ -77,7 +78,7 @@ public class LyricController {
     private HSSFSheet sheet;
     private String currentSingerName;
 
-    @RequestMapping("/search")
+    @RequestMapping("/getSingerSongEmotionList")
     public List<LyricEmotion> searchSinger(@RequestParam(value = "singer") String singer) {
 
         songs.clear();
@@ -115,6 +116,7 @@ public class LyricController {
                             public LyricEmotion apply(@NonNull SongEmotionEntity songEmotionEntity) throws Exception {
                                 LyricEmotion emotion
                                         = new LyricEmotion();
+                                emotion.setSongId(song.getSongId());
                                 emotion.setSongName(songEmotionEntity.getSongName());
                                 TextSentimentResult result = new TextSentimentResult();
                                 result.setPositive(songEmotionEntity.getPositive());
@@ -134,7 +136,7 @@ public class LyricController {
                     = new LyricEmotion();
             emotion.setSongName(song.getName());
             emotion.setEmotion(lexicalAnalysisResult);
-            if((lexicalAnalysisResult.getNegative()!=0&&lexicalAnalysisResult.getNegative()!=1)&&(lexicalAnalysisResult.getPositive()!=0&&lexicalAnalysisResult.getPositive()!=1)){
+            if ((lexicalAnalysisResult.getNegative() != 0 && lexicalAnalysisResult.getNegative() != 1) && (lexicalAnalysisResult.getPositive() != 0 && lexicalAnalysisResult.getPositive() != 1)) {
                 emotionService.insertSongEmotion(song.getSongId(), song.getName(), lexicalAnalysisResult.getPositive(), lexicalAnalysisResult.getNegative());
             }
 
@@ -144,7 +146,7 @@ public class LyricController {
         }).subscribe((emotion -> {
 
 
-            if((emotion.getEmotion().getNegative()!=0&&emotion.getEmotion().getNegative()!=1)&&(emotion.getEmotion().getPositive()!=0&&emotion.getEmotion().getPositive()!=1)){
+            if ((emotion.getEmotion().getNegative() != 0 && emotion.getEmotion().getNegative() != 1) && (emotion.getEmotion().getPositive() != 0 && emotion.getEmotion().getPositive() != 1)) {
 
                 resultList.add(emotion);
             }
@@ -208,6 +210,7 @@ public class LyricController {
 
             LyricEmotion emotion
                     = new LyricEmotion();
+            emotion.setSongId(song.getSongId());
             emotion.setSongName(song.getName());
             emotion.setEmotion(lexicalAnalysisResult);
 
@@ -233,7 +236,7 @@ public class LyricController {
     }
 
 
-    @RequestMapping("/lyrickeyword")
+    @RequestMapping("/getLyricKeyword")
     public void getLyricKeyword(@RequestParam(value = "singer") String singer) {
         currentSingerName = singer;
         final StringBuffer stringBuffer = new StringBuffer();
@@ -425,7 +428,7 @@ public class LyricController {
 
         SingerEntity singerEntity1 = singerService.getSingerByName(singer);
         Flowable<String> flowable;
-        if (singerEntity1 != null&&singerEntity1.getId()!=null) {
+        if (singerEntity1 != null && singerEntity1.getId() != null) {
 
             flowable = Flowable.just(singerEntity1.getId());
 
@@ -434,10 +437,8 @@ public class LyricController {
                     .search("http://music.163.com/api/search/pc", objectMap).flatMap(searchResult -> {
 
 
-
-
                         List<SearchResult.ResultBean.ArtistsBean> artistsBeanList = searchResult.getResult().getArtists();
-                       int currentSingerId = 19020;//默认值
+                        int currentSingerId = 19020;//默认值
                         if (artistsBeanList != null && artistsBeanList.size() > 0) {
                             SearchResult.ResultBean.ArtistsBean artistsBean = artistsBeanList.get(0);
                             currentSingerId = artistsBeanList.get(0).getId();
@@ -464,7 +465,7 @@ public class LyricController {
                     });
         }
 
-        return flowable.flatMap(new Function<String, Publisher< List<Song>>>() {
+        return flowable.flatMap(new Function<String, Publisher<List<Song>>>() {
             @Override
             public Publisher<List<Song>> apply(@NonNull String singerId) throws Exception {
 
@@ -504,7 +505,7 @@ public class LyricController {
                             String href = element.attr("href");
                             String songId = href.substring(href.indexOf("id=") + 3, href.length());
                             //插入数据库
-                            songService.insertSong(songId, element.text(), singerId );
+                            songService.insertSong(songId, element.text(), singerId);
                             Song song = new Song(element.text(), songId);
                             return song;
                         }).forEach(new java.util.function.Consumer<Song>() {
@@ -529,32 +530,44 @@ public class LyricController {
                         }
                 ).flatMap(song -> {
 
+
+                    return getSongLyric(song.getSongId()).flatMap(new Function<LyricEntity, Publisher<Pair<Song, Lyric>>>() {
+                        @Override
+                        public Publisher<Pair<Song, Lyric>> apply(@NonNull LyricEntity lyricEntity) throws Exception {
+                            Lyric lyric = new Lyric();
+                            Lyric.LrcBean bean = new Lyric.LrcBean();
+                            bean.setLyric(lyricEntity.getLyricContent());
+                            lyric.setLrc(bean);
+                            Pair<Song, Lyric> pair = new Pair<>(song, lyric);
+                            return Flowable.just(pair);
+                        }
+                    });
+
                     //从数据库查询
-                    LyricEntity lyricEntity = lyricService.findLyricBySongId(song.getSongId());
-                    if (lyricEntity != null) {
-                        Lyric lyric = new Lyric();
-                        Lyric.LrcBean bean = new Lyric.LrcBean();
-                        bean.setLyric(lyricEntity.getLyricContent());
-                        lyric.setLrc(bean);
-
-                        return Flowable.just(new Pair<>(song, lyric));
-                    }
-
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("id", song.getSongId());
-                    map.put("os", "pc");
-                    map.put("lv", 0);
-
-
-                    return RetrofitServiceManager.getManager().create(LyricApi.class).getSongLyric("http://music.163.com/api/song/lyric", map)
-                            .flatMap(new Function<Lyric, Publisher<Pair<Song, Lyric>>>() {
-                                @Override
-                                public Publisher<Pair<Song, Lyric>> apply(@NonNull Lyric lyric) throws Exception {
-                                    Pair<Song, Lyric> pair = new Pair<>(song, lyric);
-
-                                    return Flowable.just(pair);
-                                }
-                            });
+//                    LyricEntity lyricEntity = lyricService.findLyricBySongId(song.getSongId());
+//                    if (lyricEntity != null) {
+//                        Lyric lyric = new Lyric();
+//                        Lyric.LrcBean bean = new Lyric.LrcBean();
+//                        bean.setLyric(lyricEntity.getLyricContent());
+//                        lyric.setLrc(bean);
+//
+//                        return Flowable.just(new Pair<>(song, lyric));
+//                    }
+//                    Map<String, Object> map = new HashMap<>();
+//                    map.put("id", song.getSongId());
+//                    map.put("os", "pc");
+//                    map.put("lv", 0);
+//
+//
+//                    return RetrofitServiceManager.getManager().create(LyricApi.class).getSongLyric("http://music.163.com/api/song/lyric", map)
+//                            .flatMap(new Function<Lyric, Publisher<Pair<Song, Lyric>>>() {
+//                                @Override
+//                                public Publisher<Pair<Song, Lyric>> apply(@NonNull Lyric lyric) throws Exception {
+//                                    Pair<Song, Lyric> pair = new Pair<>(song, lyric);
+//
+//                                    return Flowable.just(pair);
+//                                }
+//                            });
 
                 }).map(songLyricPair -> {
 
@@ -563,7 +576,7 @@ public class LyricController {
                         Song song = new Song(songOri.getName(), songOri.getSongId());
                         song.setLyricContent(handleTheLyricContent(songLyricPair.getValue().getLrc().getLyric()));
                         //插入数据库
-                        if(song.getLyricContent()!=null&&song.getLyricContent().length()>0){
+                        if (song.getLyricContent() != null && song.getLyricContent().length() > 0) {
 
                             lyricService.insertLyric(song.getSongId(), song.getName(), song.getLyricContent());
                         }
@@ -574,6 +587,51 @@ public class LyricController {
                     return new Song();
 
                 });
+
+    }
+
+
+    @RequestMapping("/search")
+    public DefaultResultBean<LyricEntity> getSongLyricWithId(@RequestParam("songId") String songId) {
+
+
+        DefaultResultBean<LyricEntity> bean = new DefaultResultBean<>();
+
+        getSongLyric(songId).subscribe(lyricEntity -> bean.buildSuccessResult(lyricEntity));
+
+
+        return bean;
+
+    }
+
+
+    private Flowable<LyricEntity> getSongLyric(String songId) {
+
+        LyricEntity lyricEntity = lyricService.findLyricBySongId(songId);
+
+        if (lyricEntity != null) {
+
+            return Flowable.just(lyricEntity);
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", songId);
+        map.put("os", "pc");
+        map.put("lv", 0);
+
+        return RetrofitServiceManager.getManager().create(LyricApi.class).getSongLyric("http://music.163.com/api/song/lyric", map)
+
+                .flatMap(new Function<Lyric, Publisher<LyricEntity>>() {
+                    @Override
+                    public Publisher<LyricEntity> apply(@NonNull Lyric lyric) throws Exception {
+                        LyricEntity lyricEntity = new LyricEntity();
+                        lyricEntity.setSongName("");
+                        lyricEntity.setSongId(songId);
+                        lyricEntity.setLyricContent(lyric.getLrc().getLyric());
+
+                        return Flowable.just(lyricEntity);
+                    }
+                })
+                ;
 
     }
 
@@ -713,7 +771,7 @@ public class LyricController {
             public void accept(TextSentimentResult textSentimentResult) throws Exception {
 
                 mTextSentimentResult = textSentimentResult;
-                if(textSentimentResult.getPositive()!=0&&textSentimentResult.getNegative()!=0){
+                if (textSentimentResult.getPositive() != 0 && textSentimentResult.getNegative() != 0) {
 
                     emotionService.insertSongEmotion(songId, songName, textSentimentResult.getPositive(), textSentimentResult.getNegative());
                 }
@@ -729,7 +787,7 @@ public class LyricController {
 
         List<Song> list = new ArrayList<>();
 
-        List<SongEntity> songListFromDb = songService.findSongList(id );
+        List<SongEntity> songListFromDb = songService.findSongList(id);
 
         if (songListFromDb != null && songListFromDb.size() > 0) {
 
