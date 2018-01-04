@@ -1,9 +1,6 @@
 package com.ares;
 
-import com.ares.entity.LyricEntity;
-import com.ares.entity.SingerEntity;
-import com.ares.entity.SongEmotionEntity;
-import com.ares.entity.SongEntity;
+import com.ares.entity.*;
 import com.ares.http.LexicalAnalysisResult;
 import com.ares.http.RetrofitServiceManager;
 import com.ares.http.TextSentimentResult;
@@ -25,13 +22,17 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import retrofit2.http.GET;
+import retrofit2.http.Url;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -830,6 +831,119 @@ public class LyricController {
         }
 
         return list;
+    }
+
+
+
+    private interface ArtistApi {
+
+
+        @GET
+        Flowable<String> getArtistDesc(@Url String url);
+    }
+
+
+    private  DefaultResultBean<SingerDetail> resultBean;
+    @RequestMapping("/api/getSingerDetail")
+    public DefaultResultBean<SingerDetail> getSingerDetail(@RequestParam(value = "id") String id){
+
+        resultBean=null;
+
+        RetrofitServiceManager.getManager().create(ArtistApi.class)
+                .getArtistDesc("http://music.163.com/artist/desc?id=" + id)
+                .flatMap(new Function<String, Publisher<Document>>() {
+                    @Override
+                    public Publisher<Document> apply(String s) throws Exception {
+
+
+                        return Flowable.just(Jsoup.parse(s));
+                    }
+                })
+                .flatMap(new Function<Document, Publisher<ArtistDetail>>() {
+                    @Override
+                    public Publisher<ArtistDetail> apply(Document document) throws Exception {
+
+                        ArtistDetail artistDetail = new ArtistDetail();
+                        Elements elements2 = document.getElementsByAttributeValue("name", "keywords");
+                        for (Element element : elements2) {
+                            String content = element.attr("content");
+                            artistDetail.setHeaderTitle(content);
+                        }
+                        Elements elementsDesc = document.getElementsByClass("n-artdesc");
+
+                        Elements h2List = new Elements();
+                        Elements pList = new Elements();
+                        for (Element element : elementsDesc) {
+
+                            h2List.addAll(element.getElementsByTag("h2"));
+                            pList.addAll(element.getElementsByTag("p"));
+                        }
+
+                        for (Element element : h2List) {
+                            artistDetail.addTitle(element.text());
+                        }
+                        for (Element element : pList) {
+                            Elements elements = Jsoup.parse(element.outerHtml().replace("<br>", "{}")).getAllElements();
+
+
+                            artistDetail.addContent(elements.last().text());
+
+                        }
+                        return Flowable.just(artistDetail);
+                    }
+                }).flatMap(new Function<ArtistDetail, Publisher<SingerDetail>>() {
+            @Override
+            public Publisher<SingerDetail> apply(ArtistDetail artistDetail) throws Exception {
+
+
+                List<TitleContentBean> list = new ArrayList<>();
+                int itemCount = artistDetail.getTitleList().size() < artistDetail.getContentList().size() ? artistDetail.getTitleList().size() : artistDetail.getContentList().size();
+                for (int i = 0; i < itemCount; i++) {
+
+                    String title = artistDetail.getTitleList().get(i);
+                    String content = artistDetail.getContentList().get(i);
+                    TitleContentBean titleBean = new TitleContentBean(title, TitleContentBean.TITLE);
+                    TitleContentBean contentBean = new TitleContentBean(content, TitleContentBean.CONTENT);
+                    list.add(titleBean);
+                    list.add(contentBean);
+                }
+                SingerDetail singerDetail = new SingerDetail();
+                singerDetail.setHeaderTitle(artistDetail.getHeaderTitle());
+                singerDetail.setTitleContentList(list);
+                return Flowable.just(singerDetail);
+            }
+        }).subscribe(new Consumer<SingerDetail>() {
+            @Override
+            public void accept(SingerDetail singerDetail) throws Exception {
+
+                resultBean = new DefaultResultBean<SingerDetail>().buildSuccessResult(singerDetail);
+            }
+        });
+
+        return  resultBean;
+    }
+
+    private class SingerDetail {
+
+
+        private String headerTitle;
+        private  List<TitleContentBean> titleContentList;
+
+        public String getHeaderTitle() {
+            return headerTitle;
+        }
+
+        public void setHeaderTitle(String headerTitle) {
+            this.headerTitle = headerTitle;
+        }
+
+        public List<TitleContentBean> getTitleContentList() {
+            return titleContentList;
+        }
+
+        public void setTitleContentList(List<TitleContentBean> titleContentList) {
+            this.titleContentList = titleContentList;
+        }
     }
 
 
