@@ -31,8 +31,12 @@ class PhotoController {
             val photoElements = document.getElementsByClass("avatar-box")
             println("---photoElements---")
             println(photoElements)
-            println("------")
-            val nameAndUrl = photoElements[1].allElements[0]
+            println("------") 
+
+           val nameAndUrl= photoElements.filter {
+
+                it.className() == "photo-frame"
+            }[0].allElements[0]
 
             actressDetail.name = nameAndUrl.attr("title")
             actressDetail.avatar = nameAndUrl.attr("src")
