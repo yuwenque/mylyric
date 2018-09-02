@@ -29,6 +29,9 @@ class PhotoController {
             val document = Jsoup.connect(redirectUrl).get()
 
             val photoElements = document.getElementsByClass("avatar-box")
+            println("---photoElements---")
+            println(photoElements)
+            println("------")
             val nameAndUrl = photoElements[0].allElements[0]
 
             actressDetail.name = nameAndUrl.attr("title")
@@ -39,29 +42,6 @@ class PhotoController {
 
 
             println(topElement)
-//            infoElement.allElements.filter {
-//
-//                it.className() != "pb10"
-//            }.map {
-//                it.text()
-//            }.forEach {
-//                when{
-//
-//                    it.indexOf("生日") !=-1 -> actressDetail.birthday = it
-//                    it.indexOf("年齡") !=-1 ->{
-//
-//                        val str = it.split(": ")
-//                        actressDetail.age = str[1].toInt()
-//
-//                    }
-//                    it.indexOf("胸圍") !=-1 -> actressDetail.chestWidth = it
-//                    it.indexOf("身高") !=-1 -> actressDetail.stature = it
-//                    it.indexOf("腰圍") !=-1 -> actressDetail.waistline = it
-//                    it.indexOf("臀圍") !=-1 -> actressDetail.hipline = it
-//                    it.indexOf("出生地") !=-1 -> actressDetail.home = it
-//                    it.indexOf("愛好") !=-1 -> actressDetail.hobby = it
-//                }
-//            }
             infoElement.allElements.filter {
 
                 it.className() != "pb10"
