@@ -20,11 +20,11 @@ import java.util.ArrayList
 class PhotoController {
 
 
-    @RequestMapping("/search/{keyword}")
-    fun search(@PathVariable keyword:  String ):String {
+    @RequestMapping("/search/{keyword}/{page}")
+    fun search(@PathVariable keyword:  String,@PathVariable page:Int ):String {
 
-        val url = SEARCH_URL + keyword + "&parent=ce"
-
+        val url =   SEARCH_URL.plus(keyword).plus("/").plus(page)
+        println("搜索路径 = $url")
         try {
             val document = Jsoup.connect(url).get()
              println(document)
