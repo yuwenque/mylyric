@@ -12,5 +12,6 @@ public class LyricApplication {
     public static void main(String[] args) {
         SpringApplication.run(LyricApplication.class, args);
 
+        System.out.println("test ------------------");
     }
 }
