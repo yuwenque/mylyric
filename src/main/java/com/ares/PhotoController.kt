@@ -43,6 +43,7 @@ class PhotoController {
                 infoElements[it]
             }.map {
 
+                println("内容------ $it")
                 it.text()
             }  .forEach {
 
