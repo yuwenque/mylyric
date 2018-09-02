@@ -25,6 +25,7 @@ class PhotoController {
         try {
             val document = Jsoup.connect(url).get()
 
+            println(document)
             return  document.toString()
         }catch (e:IOException){
 
