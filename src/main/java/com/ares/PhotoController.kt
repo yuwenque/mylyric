@@ -50,7 +50,8 @@ class PhotoController {
                     it.indexOf("年齡") !=-1 ->{
 
                         val str = it.split(":")
-                        actressDetail.age = str[1].toInt()
+                        actressDetail.age = str[1].split(" ")[1].toInt()
+
                     }
                     it.indexOf("胸圍") !=-1 -> actressDetail.chestWidth = it
                     it.indexOf("身高") !=-1 -> actressDetail.stature = it
@@ -60,7 +61,7 @@ class PhotoController {
                     it.indexOf("愛好") !=-1 -> actressDetail.hobby = it
                 }
             }
-            
+
         } catch (e: IOException) {
             e.printStackTrace()
         }
