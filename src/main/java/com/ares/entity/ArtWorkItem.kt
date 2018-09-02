@@ -1,6 +1,6 @@
 package com.ares.entity
 
-class ActWorkItem :BaseSearchItem() {
+class ArtWorkItem :BaseSearchItem() {
 
 
     var title:String?=null
@@ -10,7 +10,7 @@ class ActWorkItem :BaseSearchItem() {
     var date:String?=null
     var movieUrl:String?=null
     override fun toString(): String {
-        return "ActWorkItem(title=$title, content=$content, code=$code, photoUrl=$photoUrl, date=$date, movieUrl=$movieUrl)"
+        return "ArtWorkItem(title=$title, content=$content, code=$code, photoUrl=$photoUrl, date=$date, movieUrl=$movieUrl)"
     }
 
 

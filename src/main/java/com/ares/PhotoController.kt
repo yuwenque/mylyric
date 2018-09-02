@@ -3,30 +3,27 @@ package com.ares
 import com.ares.entity.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.io.File
 
-import javax.lang.model.util.Elements
 import java.io.IOException
 import java.util.ArrayList
 
 @RestController
-@RequestMapping("/actresses")
+@RequestMapping("/artwork")
 class PhotoController {
 
 
     @RequestMapping("/search/{keyword}/{page}")
-    fun search(@PathVariable keyword: String, @PathVariable page: Int = 1, @RequestParam(name = "type", required = false) type: Int = SEARCH_ACTWORK): List<BaseSearchItem> {
+    fun search(@PathVariable keyword: String, @PathVariable page: Int = 1, @RequestParam(name = "type", required = false) type: Int = SEARCH_ARTWORK): List<BaseSearchItem> {
 
         val list = ArrayList<BaseSearchItem>()
         val url = when (type) {
 
-            SEARCH_ACTWORK -> SEARCH_URL.plus("search/$keyword/$page")
-            SEARCH_ACTWORK_UNCENSORED -> SEARCH_URL.plus("uncensored/search/$keyword/$page&type=$type")
+            SEARCH_ARTWORK -> SEARCH_URL.plus("search/$keyword/$page")
+            SEARCH_ARTWORK_UNCENSORED -> SEARCH_URL.plus("uncensored/search/$keyword/$page&type=$type")
             SEARCH_ACTRESS -> SEARCH_URL.plus("searchstar/$keyword/$page")
             else -> SEARCH_URL
 
@@ -38,7 +35,7 @@ class PhotoController {
 
             when (type) {
 
-                SEARCH_ACTWORK_UNCENSORED, SEARCH_ACTWORK -> list.addAll(getActWorkItems(document))
+                SEARCH_ARTWORK_UNCENSORED, SEARCH_ARTWORK -> list.addAll(getActWorkItems(document))
                 SEARCH_ACTRESS -> list.addAll(getActressItems(document))
 
                 else -> BaseSearchItem()
@@ -52,15 +49,19 @@ class PhotoController {
 
     }
 
-    private fun getActWorkItems(document: Document): List<ActWorkItem> {
+    /**
+     * 从爬取的数据中获取有效数据，转化为艺术品列表
+     * @param document
+     */
+    private fun getActWorkItems(document: Document): List<ArtWorkItem> {
 
 
-        val list = ArrayList<ActWorkItem>()
+        val list = ArrayList<ArtWorkItem>()
 
         val items = document.getElementsByClass("item")
 
         items.forEach {
-            val workItem = ActWorkItem()
+            val workItem = ArtWorkItem()
             val box = it.getElementsByClass("movie-box")[0]
 
             workItem.movieUrl = box.attr("href")
@@ -105,6 +106,9 @@ class PhotoController {
             val box = it.getElementsByClass("avatar-box text-center")[0]
             item.workListUrl = box.attr("href")
 
+            val l = item.workListUrl?.split("/")
+            item.id =l!![l.size-1]
+
             val photo = box.allElements.find {
                 it.className()=="photo-frame"
             }?.allElements?.find {
@@ -127,9 +131,9 @@ class PhotoController {
         const val SEARCH_URL = "https://www.javbus.com/"
 
         //模糊
-        const val SEARCH_ACTWORK = 0
+        const val SEARCH_ARTWORK = 0
         //高清
-        const val SEARCH_ACTWORK_UNCENSORED = 1
+        const val SEARCH_ARTWORK_UNCENSORED = 1
         //艺术家
         const val SEARCH_ACTRESS = 2
     }

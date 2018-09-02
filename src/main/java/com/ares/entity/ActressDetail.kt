@@ -1,7 +1,5 @@
 package com.ares.entity
 
-//data class ActressDetail(var birthday:String,var age:Int,var stature:String,var chestWidth:String,var waistline:String,var hipline :String,var hobby:String)
-
 class ActressDetail{
 
     var name :String?=null
