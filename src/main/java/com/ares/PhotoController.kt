@@ -21,9 +21,16 @@ class PhotoController {
 
 
     @RequestMapping("/search/{keyword}/{page}")
-    fun search(@PathVariable keyword:  String,@PathVariable page:Int ):String {
+    fun search(@PathVariable keyword:  String,@PathVariable page:Int=1 ,@RequestParam(name = "type") type:Int = SEARCH_ACTWORK):String {
 
-        val url =   SEARCH_URL.plus(keyword).plus("/").plus(page)
+        val url =   when(type){
+
+            SEARCH_ACTWORK -> SEARCH_URL.plus("search/$keyword/$page")
+            SEARCH_ACTWORK_UNCENSORED -> SEARCH_URL.plus("uncensored/search/$keyword/$page&type=$type")
+            SEARCH_ACTRESS -> SEARCH_URL.plus("searchstar/$keyword/$page")
+            else -> SEARCH_URL
+
+        }
         println("搜索路径 = $url")
         try {
             val document = Jsoup.connect(url).get()
@@ -37,9 +44,17 @@ class PhotoController {
 
     }
 
+
     companion object {
 
-       const val SEARCH_URL ="https://www.javbus.com/search/"
+       const val SEARCH_URL ="https://www.javbus.com/"
+
+        //模糊
+        const val SEARCH_ACTWORK = 0
+        //高清
+        const val SEARCH_ACTWORK_UNCENSORED = 1
+        //艺术家
+        const val SEARCH_ACTRESS = 2
     }
 
     @RequestMapping("/getDetail")
