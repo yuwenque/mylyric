@@ -32,7 +32,7 @@ class PhotoController {
             println("---photoElements---")
             println(photoElements)
             println("------")
-            val nameAndUrl = photoElements[0].allElements[0]
+            val nameAndUrl = photoElements[1].allElements[0]
 
             actressDetail.name = nameAndUrl.attr("title")
             actressDetail.avatar = nameAndUrl.attr("src")
