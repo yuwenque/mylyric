@@ -36,7 +36,7 @@ class PhotoController {
            val nameAndUrl= photoElements[0].allElements.filter {
 
                 it.className() == "photo-frame"
-            }[0].allElements[0]
+            }[0].allElements[0].getElementsByAttribute("src")[0]
 
             println("---photoElements---")
             println(nameAndUrl)
@@ -48,7 +48,7 @@ class PhotoController {
             val infoElement = topElement[0]
 
 
-            println(topElement)
+//            println(topElement)
             infoElement.allElements.filter {
 
                 it.className() != "pb10"
