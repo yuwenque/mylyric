@@ -39,4 +39,13 @@ public class Actress {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+
+    @Override
+    public String toString() {
+        return "Actress{" +
+                "name='" + name + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", artworkListUrl='" + artworkListUrl + '\'' +
+                '}';
+    }
 }

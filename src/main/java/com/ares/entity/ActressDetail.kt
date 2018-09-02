@@ -14,4 +14,9 @@ class ActressDetail{
     var hipline :String?=null
     var home:String?=null
     var hobby:String?=null
+    override fun toString(): String {
+        return "ActressDetail(name=$name, avatar=$avatar, birthday=$birthday, age=$age, stature=$stature, chestWidth=$chestWidth, waistline=$waistline, hipline=$hipline, home=$home, hobby=$hobby)"
+    }
+
+
 }
