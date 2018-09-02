@@ -66,7 +66,7 @@ class PhotoController {
 
                 it.className() != "pb10"
             }.map {
-                it.text().split(" ")
+                it.text().split(": ")
             }.forEach {
                 when(it[0]){
 
