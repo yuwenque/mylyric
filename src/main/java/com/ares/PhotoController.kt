@@ -39,7 +39,7 @@ class PhotoController {
             when (type) {
 
                 SEARCH_ACTWORK_UNCENSORED, SEARCH_ACTWORK -> list.addAll(getActWorkItems(document))
-                SEARCH_ACTRESS -> ActressSearchItem()
+                SEARCH_ACTRESS -> list.addAll(getActressItems(document))
 
                 else -> BaseSearchItem()
 
@@ -57,9 +57,9 @@ class PhotoController {
 
         val list = ArrayList<ActWorkItem>()
 
-        val item = document.getElementsByClass("item")
+        val items = document.getElementsByClass("item")
 
-        item.forEach {
+        items.forEach {
             val workItem = ActWorkItem()
             val box = it.getElementsByClass("movie-box")[0]
 
@@ -98,6 +98,25 @@ class PhotoController {
 
 
         val list = ArrayList<ActressSearchItem>()
+        val items = document.getElementsByClass("item")
+
+        items.forEach {
+            val item = ActressSearchItem()
+            val box = it.getElementsByClass("avatar-box text-center")[0]
+            item.workListUrl = box.attr("href")
+
+            val photo = box.allElements.find {
+                it.className()=="photo-frame"
+            }?.allElements?.find {
+                it.hasAttr("src")
+            }
+
+            item.avatar = photo?.attr("src")
+            item.name = photo?.attr("title")
+
+            list.add(item)
+        }
+
 
         return list
 
