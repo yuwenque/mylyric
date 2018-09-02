@@ -1,7 +1,6 @@
 package com.ares
 
-import com.ares.entity.Actress
-import com.ares.entity.ActressDetail
+import com.ares.entity.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -21,9 +20,10 @@ class PhotoController {
 
 
     @RequestMapping("/search/{keyword}/{page}")
-    fun search(@PathVariable keyword:  String,@PathVariable page:Int=1 ,@RequestParam(name = "type") type:Int = SEARCH_ACTWORK):String {
+    fun search(@PathVariable keyword: String, @PathVariable page: Int = 1, @RequestParam(name = "type", required = false) type: Int = SEARCH_ACTWORK): List<BaseSearchItem> {
 
-        val url =   when(type){
+        val list = ArrayList<BaseSearchItem>()
+        val url = when (type) {
 
             SEARCH_ACTWORK -> SEARCH_URL.plus("search/$keyword/$page")
             SEARCH_ACTWORK_UNCENSORED -> SEARCH_URL.plus("uncensored/search/$keyword/$page&type=$type")
@@ -34,20 +34,78 @@ class PhotoController {
         println("搜索路径 = $url")
         try {
             val document = Jsoup.connect(url).get()
-             println(document)
-        }catch (e:IOException){
+            println(document)
+
+            when (type) {
+
+                SEARCH_ACTWORK_UNCENSORED, SEARCH_ACTWORK -> list.addAll(getActWorkItems(document))
+                SEARCH_ACTRESS -> ActressSearchItem()
+
+                else -> BaseSearchItem()
+
+            }
+        } catch (e: IOException) {
             e.printStackTrace()
         }
 
-
-        return ""
+        return list
 
     }
 
+    private fun getActWorkItems(document: Document): List<ActWorkItem> {
+
+
+        val list = ArrayList<ActWorkItem>()
+
+        val item = document.getElementsByClass("item")
+
+        item.forEach {
+            val workItem = ActWorkItem()
+            val box = it.getElementsByClass("movie-box")[0]
+
+            workItem.movieUrl = box.attr("href")
+
+            val photo = box.allElements.find {
+
+                it.className() == "photo-frame"
+            }?.allElements?.find {
+                it.hasAttr("src")
+            }
+            workItem.photoUrl = photo?.attr("src")
+            workItem.title = photo?.attr("title")
+
+            val content = box.allElements.find {
+                it.className() == "photo-info"
+            }
+
+            val contentList = content?.getElementsByTag("date")
+
+            workItem.content = content?.getElementsByTag("span")?.first()?.text()
+            workItem.code = contentList?.first()?.text()
+            workItem.date = contentList?.last()?.text()
+
+
+            list.add(workItem)
+
+
+        }
+
+        return list
+
+    }
+
+    private fun getActressItems(document: Document): List<ActressSearchItem> {
+
+
+        val list = ArrayList<ActressSearchItem>()
+
+        return list
+
+    }
 
     companion object {
 
-       const val SEARCH_URL ="https://www.javbus.com/"
+        const val SEARCH_URL = "https://www.javbus.com/"
 
         //模糊
         const val SEARCH_ACTWORK = 0
@@ -60,9 +118,9 @@ class PhotoController {
     @RequestMapping("/getDetail")
     fun getActWorkList(@RequestParam(name = "redirectUrl") redirectUrl: String): ActressDetail {
 
-        if(redirectUrl.isEmpty()){
+        if (redirectUrl.isEmpty()) {
 
-           throw RuntimeException("redirectUrl参数不能为空！！！")
+            throw RuntimeException("redirectUrl参数不能为空！！！")
         }
         println("url = $redirectUrl")
         val actressDetail = ActressDetail()
@@ -74,7 +132,7 @@ class PhotoController {
             println(photoElements)
             println("------")
 
-           val nameAndUrl= photoElements[0].allElements.filter {
+            val nameAndUrl = photoElements[0].allElements.filter {
 
                 it.className() == "photo-frame"
             }[0].allElements[0].getElementsByAttribute("src")[0]
@@ -96,20 +154,20 @@ class PhotoController {
             }.map {
                 it.text().split(": ")
             }.forEach {
-                when(it[0]){
+                when (it[0]) {
 
-                    "生日"-> actressDetail.birthday =  it[1]
-                    "年齡"->{
+                    "生日" -> actressDetail.birthday = it[1]
+                    "年齡" -> {
 
 
                         actressDetail.age = it[1].toInt()
 
                     }
-                    "胸圍" -> actressDetail.chestWidth =  it[1]
-                    "身高" -> actressDetail.stature =  it[1]
-                    "腰圍" -> actressDetail.waistline =  it[1]
-                    "臀圍"-> actressDetail.hipline =  it[1]
-                    "出生地"-> actressDetail.home = it[1]
+                    "胸圍" -> actressDetail.chestWidth = it[1]
+                    "身高" -> actressDetail.stature = it[1]
+                    "腰圍" -> actressDetail.waistline = it[1]
+                    "臀圍" -> actressDetail.hipline = it[1]
+                    "出生地" -> actressDetail.home = it[1]
                     "愛好" -> actressDetail.hobby = it[1]
                 }
             }
