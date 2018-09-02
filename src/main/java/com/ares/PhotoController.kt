@@ -23,12 +23,10 @@ class PhotoController {
     @RequestMapping("/search")
     fun getActWorkList(@RequestParam(name = "redirectUrl", defaultValue = "https://www.javbus.com/star/2di") redirectUrl: String): ActressDetail {
 
+        println("url = $redirectUrl")
         val actressDetail = ActressDetail()
         try {
             val document = Jsoup.connect(redirectUrl).get()
-//            val document = Jsoup.parse(File("/Users/yuwenque/Downloads/test.html "),"UTF-8")
-
-
 
             val photoElements = document.getElementsByClass("photo-frame")
             val nameAndUrl = photoElements[0]
