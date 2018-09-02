@@ -16,6 +16,25 @@ import java.util.ArrayList
 class PhotoController {
 
 
+    @RequestMapping("/test")
+    fun test():String{
+
+
+        val url = "https://www.javbus.com/TEM-070"
+
+        try {
+            val document = Jsoup.connect(url).get()
+
+            return  document.toString()
+        }catch (e:IOException){
+
+            e.printStackTrace()
+        }
+
+
+        return ""
+    }
+
     @RequestMapping("/search/{keyword}/{page}")
     fun search(@PathVariable keyword: String, @PathVariable page: Int = 1, @RequestParam(name = "type", required = false) type: Int = SEARCH_ARTWORK): List<BaseSearchItem> {
 
