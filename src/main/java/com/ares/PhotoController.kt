@@ -106,8 +106,8 @@ class PhotoController {
             val box = it.getElementsByClass("avatar-box text-center")[0]
             item.workListUrl = box.attr("href")
 
-//            val l = item.workListUrl?.split("/")
-//            item.id =l!![l.size-1]
+            val l = item.workListUrl?.split("/")
+            item.id =l!![l.size-1]
 
             val photo = box.allElements.find {
                 it.className()=="photo-frame"
