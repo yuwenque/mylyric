@@ -36,7 +36,7 @@ class PhotoController {
            val nameAndUrl= photoElements[0].allElements.filter {
 
                 it.className() == "photo-frame"
-            }[0]
+            }[0].allElements[0]
 
             println("---photoElements---")
             println(nameAndUrl)
