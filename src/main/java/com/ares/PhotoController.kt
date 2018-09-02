@@ -32,13 +32,14 @@ class PhotoController {
             val nameAndUrl = photoElements[0]
             actressDetail.name = nameAndUrl.attr("title")
             actressDetail.avatar = nameAndUrl.attr("src")
-            val infoElements = document.getElementsByClass("pb10")
+            val topElement = document.getElementsByClass("photo-info")
 
+            
 
-            println(infoElements)
-            (1 until infoElements.size).map {
+            println(topElement)
+            (1 until topElement.size).map {
 
-                infoElements[it]
+                topElement[it]
             }.map {
 
                 println("内容------ $it")
