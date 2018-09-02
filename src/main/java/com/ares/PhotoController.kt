@@ -20,9 +20,35 @@ import java.util.ArrayList
 class PhotoController {
 
 
-    @RequestMapping("/search")
-    fun getActWorkList(@RequestParam(name = "redirectUrl", defaultValue = "https://www.javbus.com/star/2di") redirectUrl: String): ActressDetail {
+    @RequestMapping("/search/{keyword}")
+    fun search(@PathVariable keyword:  String ):String {
 
+        val url = SEARCH_URL + keyword + "&parent=ce"
+
+        try {
+            val document = Jsoup.connect(url).get()
+             println(document)
+        }catch (e:IOException){
+            e.printStackTrace()
+        }
+
+
+        return ""
+
+    }
+
+    companion object {
+
+       const val SEARCH_URL ="https://www.javbus.com/search/"
+    }
+
+    @RequestMapping("/getDetail")
+    fun getActWorkList(@RequestParam(name = "redirectUrl") redirectUrl: String): ActressDetail {
+
+        if(redirectUrl.isEmpty()){
+
+           throw RuntimeException("redirectUrl参数不能为空！！！")
+        }
         println("url = $redirectUrl")
         val actressDetail = ActressDetail()
         try {
