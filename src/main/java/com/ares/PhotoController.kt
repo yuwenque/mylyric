@@ -28,8 +28,9 @@ class PhotoController {
         try {
             val document = Jsoup.connect(redirectUrl).get()
 
-            val photoElements = document.getElementsByClass("photo-frame")
-            val nameAndUrl = photoElements[0]
+            val photoElements = document.getElementsByClass("avatar-box")
+            val nameAndUrl = photoElements[0].allElements[0]
+
             actressDetail.name = nameAndUrl.attr("title")
             actressDetail.avatar = nameAndUrl.attr("src")
             val topElement = document.getElementsByClass("photo-info")
