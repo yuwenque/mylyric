@@ -34,18 +34,16 @@ class PhotoController {
             actressDetail.avatar = nameAndUrl.attr("src")
             val topElement = document.getElementsByClass("photo-info")
 
-            
+            val infoElement = topElement[0]
+
 
             println(topElement)
-            (1 until topElement.size).map {
+            infoElement.allElements.filter {
 
-                topElement[it]
+                it.className() != "pb10"
             }.map {
-
-                println("内容------ $it")
                 it.text()
-            }  .forEach {
-
+            }.forEach {
                 when{
 
                     it.indexOf("生日") !=-1 -> actressDetail.birthday = it
@@ -61,8 +59,8 @@ class PhotoController {
                     it.indexOf("出生地") !=-1 -> actressDetail.home = it
                     it.indexOf("愛好") !=-1 -> actressDetail.hobby = it
                 }
-
             }
+            
         } catch (e: IOException) {
             e.printStackTrace()
         }
