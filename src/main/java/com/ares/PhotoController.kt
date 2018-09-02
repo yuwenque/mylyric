@@ -29,15 +29,18 @@ class PhotoController {
             val document = Jsoup.connect(redirectUrl).get()
 
             val photoElements = document.getElementsByClass("avatar-box")
-            println("---photoElements---")
+            println("---avatar-box---")
             println(photoElements)
-            println("------") 
+            println("------")
 
            val nameAndUrl= photoElements.filter {
 
                 it.className() == "photo-frame"
-            }[0].allElements[0]
+            }[0]
 
+            println("---photoElements---")
+            println(nameAndUrl)
+            println("------")
             actressDetail.name = nameAndUrl.attr("title")
             actressDetail.avatar = nameAndUrl.attr("src")
             val topElement = document.getElementsByClass("photo-info")
