@@ -31,13 +31,13 @@ class PhotoController {
 
 
             val urlList = ArrayList<String>()
-            val waterFall =  document.getElementsByClass("sample-waterfall")
+            val waterFall =  document.getElementsByClass("sample-box")
             println("-----")
             println(waterFall)
             println("-----")
             if(waterFall.isNotEmpty()){
 
-                waterFall[0].getElementsByClass("sample-box").forEach {
+                waterFall.forEach {
 
 
                     urlList.add( it.attr("href"))
