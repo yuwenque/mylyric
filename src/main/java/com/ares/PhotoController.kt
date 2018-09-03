@@ -31,13 +31,21 @@ class PhotoController {
 
 
             val urlList = ArrayList<String>()
-            document.getElementsByClass("sample-waterfall")[0].getElementsByClass("sample-box").forEach {
+            val waterFall =  document.getElementsByClass("sample-waterfall")
+            println("-----")
+            println(waterFall)
+            println("-----")
+            if(waterFall.isNotEmpty()){
+
+                waterFall[0].getElementsByClass("sample-box").forEach {
 
 
-                urlList.add( it.attr("href"))
+                    urlList.add( it.attr("href"))
+                }
+
+                movieSearchItem.samplePhotos = urlList
             }
 
-            movieSearchItem.samplePhotos = urlList
 
             println(document)
             movieSearchItem.coverPhotoUrl=  movieElement.attr("href")
