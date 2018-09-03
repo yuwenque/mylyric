@@ -61,7 +61,7 @@ class PhotoController {
             val infoEles = document.getElementsByClass("col-md-3 info")[0]
 
 
-            infoEles.getElementsByClass("p").forEach {
+            infoEles.getElementsByTag("p").forEach {
 
               val spanElements =  it.allElements.filter {
 
