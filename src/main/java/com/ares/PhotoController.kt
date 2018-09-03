@@ -60,7 +60,9 @@ class PhotoController {
 
             val infoEles = document.getElementsByClass("col-md-3 info")[0]
 
-
+            println("-------infoEles--------")
+            println(infoEles)
+            println("---------------")
             infoEles.getElementsByTag("p").forEach {
 
               val spanElements =  it.allElements.filter {
@@ -77,7 +79,6 @@ class PhotoController {
 
                     "發行日期" -> movieSearchItem.date = spanElements[1].text()
                     "長度"-> movieSearchItem.duration = spanElements[1].text()
-                    "製作商" -> movieSearchItem.manufacturer = spanElements[1].text()
 
                 }
 
