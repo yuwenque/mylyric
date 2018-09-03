@@ -10,4 +10,5 @@ class MovieSearchItem {
 
     var actresses:ArrayList<ActressSearchItem>  = ArrayList()
     var samplePhotos:ArrayList<String>  = ArrayList()
+    var relateArtWorkList:ArrayList<SimpleMovieItem>  = ArrayList()
 }

@@ -111,6 +111,7 @@ class PhotoController {
 
 
             val relateEle = document.getElementById("related-waterfall")
+            val relateList = ArrayList<SimpleMovieItem>()
             relateEle.getElementsByClass("movie-box").forEach {
 
 
@@ -123,14 +124,21 @@ class PhotoController {
                 if(imgEle.isNotEmpty()){
                     println("-------imgEle--------")
 
+
                     val src = imgEle[0].attr("src")
                     println("relate url=$url,title=$title,src=$src")
                     println("---------------")
+                    val item = SimpleMovieItem()
+                    item.title = title
+                    item.url =url
+                    item.coverPhotoUrl=src
+                    item.code = item.url?.split("/")?.last()
 
+                    relateList.add(item)
                 }
 
-
             }
+            movieSearchItem.relateArtWorkList = relateList
 
 
 
