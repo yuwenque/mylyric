@@ -78,8 +78,8 @@ class PhotoController {
 
                     when(header){
 
-                        "發行日期" -> movieSearchItem.date =it.text()
-                        "長度"-> movieSearchItem.duration = it.text()
+                        "發行日期" -> movieSearchItem.date =it.text().split(":")[1]
+                        "長度"-> movieSearchItem.duration = it.text().split(":")[1]
 
                     }
                 }
