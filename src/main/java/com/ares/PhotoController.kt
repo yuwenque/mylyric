@@ -330,6 +330,7 @@ class PhotoController {
                         actressDetail.age = it[1].toInt()
 
                     }
+                    "罩杯"->actressDetail.cup=it[1]
                     "胸圍" -> actressDetail.chestWidth = it[1]
                     "身高" -> actressDetail.stature = it[1]
                     "腰圍" -> actressDetail.waistline = it[1]

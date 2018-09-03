@@ -6,6 +6,7 @@ class ActressDetail{
     var avatar :String?=null
     var birthday:String?=null
     var age:Int?=null
+    var cup:String?=null
     var stature:String?=null
     var chestWidth:String?=null
     var waistline:String?=null
