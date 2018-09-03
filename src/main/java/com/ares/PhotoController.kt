@@ -29,17 +29,11 @@ class PhotoController {
 
             val movieElement = document.getElementsByClass("bigImage")[0]
 
-            println("-------movieElement--------")
-            println(movieElement)
-            println("---------------")
 
             movieSearchItem.coverPhotoUrl=  movieElement.attr("href")
 
             val srcE = movieElement.getElementsByAttribute("src")[0]
 
-            println("-------srcE--------")
-            println(srcE)
-            println("---------------")
             movieSearchItem.title =srcE.attr("title")
             movieSearchItem.code = code
 
@@ -48,9 +42,6 @@ class PhotoController {
             val startElements = document.getElementsByClass("avatar-box")
 
 
-            println("-------startElements--------")
-            println(startElements)
-            println("---------------")
             val starList = ArrayList<ActressSearchItem>()
 
             startElements.forEach {
@@ -69,6 +60,10 @@ class PhotoController {
 
             val infoEles = document.getElementsByClass("col-md-3 info")[0]
 
+
+            println("-------infoEles--------")
+            println(infoEles)
+            println("---------------")
             infoEles.getElementsByClass("p").forEach {
 
               val spanElements =  it.allElements.filter {
