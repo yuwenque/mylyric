@@ -47,7 +47,7 @@ class PhotoController {
             }
 
 
-            println(document)
+//            println(document)
             movieSearchItem.coverPhotoUrl=  movieElement.attr("href")
 
             val srcE = movieElement.getElementsByAttribute("src")[0]
