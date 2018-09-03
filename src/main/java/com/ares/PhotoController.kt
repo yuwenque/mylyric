@@ -273,6 +273,15 @@ class PhotoController {
         const val SEARCH_ACTRESS = 2
     }
 
+    @RequestMapping("/actressInfo")
+    fun getActressInfo(@RequestParam(name = "id") id: String): ActressDetail {
+
+
+        return getActWorkList(SEARCH_URL.plus("star/$id"))
+    }
+
+
+
     @RequestMapping("/getDetail")
     fun getActWorkList(@RequestParam(name = "redirectUrl") redirectUrl: String): ActressDetail {
 
