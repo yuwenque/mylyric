@@ -61,9 +61,6 @@ class PhotoController {
             val infoEles = document.getElementsByClass("col-md-3 info")[0]
 
 
-            println("-------infoEles--------")
-            println(infoEles)
-            println("---------------")
             infoEles.getElementsByClass("p").forEach {
 
               val spanElements =  it.allElements.filter {
@@ -71,6 +68,9 @@ class PhotoController {
                    it.tagName() == "span"
                 }
 
+                println("-------spanElements--------")
+                println(spanElements)
+                println("---------------")
                 val header = spanElements[0].text().split(":")[0]
 
                 when(header){
