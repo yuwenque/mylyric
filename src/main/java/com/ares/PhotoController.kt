@@ -73,14 +73,17 @@ class PhotoController {
                 println("-------spanElements--------")
                 println(spanElements)
                 println("---------------")
-                val header = spanElements[0].text().split(":")[0]
+                if(spanElements.isNotEmpty()){
+                    val header = spanElements[0].text().split(":")[0]
 
-                when(header){
+                    when(header){
 
-                    "發行日期" -> movieSearchItem.date =it.text()
-                    "長度"-> movieSearchItem.duration = it.text()
+                        "發行日期" -> movieSearchItem.date =it.text()
+                        "長度"-> movieSearchItem.duration = it.text()
 
+                    }
                 }
+
 
 
             }
