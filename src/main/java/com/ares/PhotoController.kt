@@ -16,24 +16,67 @@ import java.util.ArrayList
 class PhotoController {
 
 
-    @RequestMapping("/test")
-    fun test():String{
+    @RequestMapping("/{code}")
+    fun test(@PathVariable code:String = "TEM-070"):MovieSearchItem{
 
 
-        val url = "https://www.javbus.com/TEM-070"
+        val movieSearchItem= MovieSearchItem()
+        val url = SEARCH_URL.plus(code)
 
         try {
             val document = Jsoup.connect(url).get()
 
-            println(document)
-            return  document.toString()
+            val movieElement = document.getElementsByClass("bigImage")[0]
+
+            println("-------movieElement--------")
+            println(movieElement)
+            println("---------------")
+
+            movieSearchItem.coverPhotoUrl=  movieElement.attr("href")
+
+            val srcE = movieElement.getElementsByAttribute("src")[0]
+
+            println("-------srcE--------")
+            println(srcE)
+            println("---------------")
+            movieSearchItem.title =srcE.attr("title")
+            movieSearchItem.code = code
+
+//            val starRootElement = document.getElementsByClass("star-div")[0]
+//            val startElements = starRootElement.getElementsByClass("avatar-waterfall")
+            val startElements = document.getElementsByClass("avatar-box")
+
+
+            println("-------startElements--------")
+            println(startElements)
+            println("---------------")
+            val starList = ArrayList<ActressSearchItem>()
+
+            startElements.forEach {
+
+                val item = ActressSearchItem()
+
+                item.workListUrl=  it.attr("href")
+
+               val photoEle =  it.getElementsByAttribute("src")[0]
+                item.avatar = photoEle.attr("src")
+                item.name = photoEle.attr("title")
+                item.id = item.avatar?.split("/")?.last()
+                starList.add(item)
+
+            }
+
+
+            movieSearchItem.list = starList
+
+
         }catch (e:IOException){
 
             e.printStackTrace()
         }
 
 
-        return ""
+        return movieSearchItem
     }
 
     @RequestMapping("/search/{keyword}/{page}")
