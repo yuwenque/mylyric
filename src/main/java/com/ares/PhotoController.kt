@@ -17,8 +17,9 @@ class PhotoController {
 
 
     @RequestMapping("/{code}")
-    fun test(@PathVariable code:String = "TEM-070"):MovieSearchItem{
+    fun test(@PathVariable(required = true) code:String):MovieSearchItem{
 
+        // code = "TEM-070"
 
         val movieSearchItem= MovieSearchItem()
         val url = SEARCH_URL.plus(code)
@@ -267,7 +268,7 @@ class PhotoController {
         return actressDetail
     }
 
-    @RequestMapping("/{page}")
+    @RequestMapping("/actresses/{page}")
     fun getActressList(@PathVariable page: Int): List<Actress> {
 
 
