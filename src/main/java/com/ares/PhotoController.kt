@@ -30,6 +30,16 @@ class PhotoController {
             val movieElement = document.getElementsByClass("bigImage")[0]
 
 
+            val urlList = ArrayList<String>()
+            document.getElementsByClass("sample-waterfall")[0].getElementsByClass("sample-box").forEach {
+
+
+                urlList.add( it.attr("href"))
+            }
+
+            movieSearchItem.samplePhotos = urlList
+
+            println(document)
             movieSearchItem.coverPhotoUrl=  movieElement.attr("href")
 
             val srcE = movieElement.getElementsByAttribute("src")[0]

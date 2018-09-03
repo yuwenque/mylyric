@@ -9,4 +9,5 @@ class MovieSearchItem {
     var duration:String?=null
 
     var actresses:ArrayList<ActressSearchItem>  = ArrayList()
+    var samplePhotos:ArrayList<String>  = ArrayList()
 }
