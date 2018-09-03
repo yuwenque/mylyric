@@ -77,7 +77,7 @@ class PhotoController {
 
                 when(header){
 
-                    "發行日期" -> movieSearchItem.date = spanElements[1].text()
+                    "發行日期" -> movieSearchItem.date =it.text()
                     "長度"-> movieSearchItem.duration = spanElements[1].text()
 
                 }
