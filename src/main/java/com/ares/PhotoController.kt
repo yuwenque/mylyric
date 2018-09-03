@@ -67,8 +67,30 @@ class PhotoController {
 
             }
 
+            val infoEles = document.getElementsByClass("col-md-3 info")[0]
 
-            movieSearchItem.list = starList
+            infoEles.getElementsByClass("p").forEach {
+
+              val spanElements =  it.allElements.filter {
+
+                   it.tagName() == "span"
+                }
+
+                val header = spanElements[0].text().split(":")[0]
+
+                when(header){
+
+                    "發行日期" -> movieSearchItem.date = spanElements[1].text()
+                    "長度"-> movieSearchItem.duration = spanElements[1].text()
+                    "製作商" -> movieSearchItem.manufacturer = spanElements[1].text()
+
+                }
+
+
+            }
+
+
+            movieSearchItem.actresses = starList
 
 
         }catch (e:IOException){

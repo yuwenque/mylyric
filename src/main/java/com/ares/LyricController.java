@@ -267,10 +267,10 @@ public class LyricController {
 //        }).subscribe(lexicalAnalysisResult -> {
 //
 //            Map<String, Integer> map = new HashMap<>();
-//            List<LexicalAnalysisResult.CombtokensBean> list = lexicalAnalysisResult.getCombtokens();
+//            List<LexicalAnalysisResult.CombtokensBean> actresses = lexicalAnalysisResult.getCombtokens();
 //
 //
-//            for (LexicalAnalysisResult.CombtokensBean combtokensBean : list) {
+//            for (LexicalAnalysisResult.CombtokensBean combtokensBean : actresses) {
 //
 //                if (combtokensBean != null && !"人名".equals(combtokensBean.getCls())) {
 //
@@ -321,22 +321,22 @@ public class LyricController {
 //
 //    }
 //
-//    private List<Temp> sortList(List<Temp> list) {
+//    private List<Temp> sortList(List<Temp> actresses) {
 //
 //
-//        for (int i = 0; i < list.size(); i++) {
+//        for (int i = 0; i < actresses.size(); i++) {
 //
-//            for (int j = 0; j < list.size() - i - 1; j++) {
+//            for (int j = 0; j < actresses.size() - i - 1; j++) {
 //
-//                if (list.get(j).getCount() < list.get(j + 1).getCount()) {
+//                if (actresses.get(j).getCount() < actresses.get(j + 1).getCount()) {
 //
-//                    Collections.swap(list, j, j + 1);
+//                    Collections.swap(actresses, j, j + 1);
 //                }
 //
 //            }
 //        }
 //
-//        return list;
+//        return actresses;
 //
 //    }
 //
@@ -404,16 +404,16 @@ public class LyricController {
 //
 //    @RequestMapping("/api/songs")
 //    public List<Song> findTheSongOfThisSinger(String singer) {
-//        List<Song> list = new ArrayList<>();
+//        List<Song> actresses = new ArrayList<>();
 //
 //        getSong(singer).subscribe(new Consumer<Song>() {
 //            @Override
 //            public void accept(Song song) throws Exception {
-//                list.add(song);
+//                actresses.add(song);
 //            }
 //        });
 //
-//        return list;
+//        return actresses;
 //    }
 //
 //
@@ -785,7 +785,7 @@ public class LyricController {
 //    @RequestMapping("/api/getSongListWithId")
 //    public List<Song> getSongs(@RequestParam("id") String id) {
 //
-//        List<Song> list = new ArrayList<>();
+//        List<Song> actresses = new ArrayList<>();
 //
 //        List<SongEntity> songListFromDb = songService.findSongList(id);
 //
@@ -822,14 +822,14 @@ public class LyricController {
 //                @Override
 //                public void accept(Song song) {
 //
-//                    list.add(song);
+//                    actresses.add(song);
 //                }
 //            });
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
 //
-//        return list;
+//        return actresses;
 //    }
 //
 //
@@ -895,7 +895,7 @@ public class LyricController {
 //            public Publisher<SingerDetail> apply(ArtistDetail artistDetail) throws Exception {
 //
 //
-//                List<TitleContentBean> list = new ArrayList<>();
+//                List<TitleContentBean> actresses = new ArrayList<>();
 //                int itemCount = artistDetail.getTitleList().size() < artistDetail.getContentList().size() ? artistDetail.getTitleList().size() : artistDetail.getContentList().size();
 //                for (int i = 0; i < itemCount; i++) {
 //
@@ -903,12 +903,12 @@ public class LyricController {
 //                    String content = artistDetail.getContentList().get(i);
 //                    TitleContentBean titleBean = new TitleContentBean(title, TitleContentBean.TITLE);
 //                    TitleContentBean contentBean = new TitleContentBean(content, TitleContentBean.CONTENT);
-//                    list.add(titleBean);
-//                    list.add(contentBean);
+//                    actresses.add(titleBean);
+//                    actresses.add(contentBean);
 //                }
 //                SingerDetail singerDetail = new SingerDetail();
 //                singerDetail.setHeaderTitle(artistDetail.getHeaderTitle());
-//                singerDetail.setTitleContentList(list);
+//                singerDetail.setTitleContentList(actresses);
 //                return Flowable.just(singerDetail);
 //            }
 //        }).subscribe(new Consumer<SingerDetail>() {

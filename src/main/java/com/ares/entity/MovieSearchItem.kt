@@ -8,5 +8,6 @@ class MovieSearchItem {
     var date:String?=null
     var duration:String?=null
 
-    var list:ArrayList<ActressSearchItem>  = ArrayList()
+    var manufacturer:String?=null
+    var actresses:ArrayList<ActressSearchItem>  = ArrayList()
 }
