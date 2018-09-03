@@ -110,6 +110,30 @@ class PhotoController {
             movieSearchItem.actresses = starList
 
 
+            val relateEle = document.getElementById("related-waterfall")
+            relateEle.getElementsByClass("movie-box").forEach {
+
+
+              val url =   it.attr("href")
+              val title =   it.attr("title")
+
+               val imgEle=it.allElements.filter {
+                    it.tagName() =="img"
+                }
+                if(imgEle.isNotEmpty()){
+                    println("-------imgEle--------")
+
+                    val src = imgEle[0].attr("src")
+                    println("relate url=$url,title=$title,src=$src")
+                    println("---------------")
+
+                }
+
+
+            }
+
+
+
         }catch (e:IOException){
 
             e.printStackTrace()
