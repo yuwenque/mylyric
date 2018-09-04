@@ -11,4 +11,10 @@ public  final class AppConstants {
 
         public static final int TIME_OUT=20000;
     }
+
+    public static class URL{
+
+
+        public static final String ARTWORK_URL = "http://ares-space.com:9595/";
+    }
 }
