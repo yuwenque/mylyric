@@ -11,10 +11,7 @@ import io.reactivex.schedulers.Schedulers
 import java.io.*
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.*
 
 object Downloader {
 
@@ -28,7 +25,7 @@ object Downloader {
                 .subscribe({ actresses ->
                     println("actresses.size = " + actresses.size)
 
-                    val service = Executors.newFixedThreadPool(actresses.size)
+                    val service = Executors.newCachedThreadPool()
 
                     val path = "/Users/yuwenque/Downloads/actresses"
                     val rootFile = File(path)

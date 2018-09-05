@@ -7,15 +7,64 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.io.*
 
-import java.io.IOException
+import java.net.URL
 import java.util.ArrayList
+import java.util.concurrent.Executors
 
 @RestController
 @RequestMapping("/artwork")
 class PhotoController {
 
 
+    @RequestMapping("/download/{page}")
+    fun download(@PathVariable page:Int):String{
+
+        var list = getActressList(page)
+
+        val pool  =  Executors.newCachedThreadPool()
+        File("/opt/actresses/").mkdir()
+        list.forEach {
+
+            pool.submit {
+
+
+
+                downloadPicture(it.avatar,"/opt/actresses"+it.name+".jpg")
+            }
+
+        }
+        return  "done"
+    }
+    //链接url下载图片
+    private fun downloadPicture(imageUrl: String, filePath: String) {
+        var url: URL? = null
+
+        try {
+            url = URL(imageUrl)
+            val dataInputStream = DataInputStream(url.openStream())
+
+            val fileOutputStream = FileOutputStream(File(filePath))
+            val output = ByteArrayOutputStream()
+
+            val buffer = ByteArray(1024)
+            var length=  dataInputStream.read(buffer)
+
+
+            while (length>0){
+                length = dataInputStream.read(buffer)
+                output.write(buffer, 0, length)
+
+            }
+            fileOutputStream.write(output.toByteArray())
+            dataInputStream.close()
+            fileOutputStream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+    }
     @RequestMapping("/{code}")
     fun test(@PathVariable(required = true) code:String):MovieSearchItem{
 
