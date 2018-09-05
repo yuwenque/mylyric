@@ -31,6 +31,7 @@ class PhotoController {
 
 
 
+                println("download url = ${it.avatar}")
                 downloadPicture(it.avatar,"/opt/actresses"+it.name+".jpg")
             }
 
