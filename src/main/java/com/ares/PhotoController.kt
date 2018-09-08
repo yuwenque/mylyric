@@ -19,6 +19,17 @@ import java.util.concurrent.Executors
 class PhotoController {
 
 
+    @RequestMapping("/test")
+    fun test():String{
+
+        val document =  Jsoup.connect("").get()
+
+        println(document)
+        return document.text()
+
+
+    }
+
     @RequestMapping("/download/{page}")
     fun download(@PathVariable page:Int):String{
 

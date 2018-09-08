@@ -7,6 +7,7 @@ import com.ares.http.RetrofitServiceManager
 import io.reactivex.Scheduler
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import org.jsoup.Jsoup
 
 import java.io.*
 import java.net.MalformedURLException
@@ -19,27 +20,13 @@ object Downloader {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        val artworkApi = RetrofitServiceManager.getManager().create(AppConstants.URL.ARTWORK_URL, ArtworkApi::class.java)
 
-        artworkApi.getActressList(1).subscribeOn(Schedulers.io())
-                .subscribe({ actresses ->
-                    println("actresses.size = " + actresses.size)
+        val document = Jsoup.connect("https://www.javbus.com/SCOP-321").get()
 
-                    val service = Executors.newCachedThreadPool()
 
-                    val path = "/Users/yuwenque/Downloads/actresses"
-                    val rootFile = File(path)
-                    println("rootFile .exist = " + rootFile.exists())
-                    for (actress in actresses) {
-                        service.submit { Downloader.downloadPicture(actress.avatar, path + "/" + actress.name + ".jpg") }
-                    }
-                }) { throwable -> throwable.printStackTrace() }
+        println(document)
 
-        try {
-            Thread.sleep(200000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
+        Thread.sleep(10000000)
 
     }
 
