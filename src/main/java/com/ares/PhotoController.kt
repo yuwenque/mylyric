@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import retrofit2.http.Query
 import java.io.*
 
 import java.net.URL
@@ -333,9 +334,9 @@ class PhotoController {
 
 
     @RequestMapping("/actress")
-    fun getArtworkListOfActress(@RequestParam(name = "id") id: String):List<ArtWorkItem>{
+    fun getArtworkListOfActress(@RequestParam(name = "id") id: String,@RequestParam("page")page:Int):List<ArtWorkItem>{
 
-        val redirectUrl = SEARCH_URL.plus("star/$id")
+        val redirectUrl = SEARCH_URL.plus("star/$id/$page")
         val document = Jsoup.connect(redirectUrl).get()
 
         val list = ArrayList<ArtWorkItem>()
