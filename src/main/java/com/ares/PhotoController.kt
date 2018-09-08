@@ -344,11 +344,11 @@ class PhotoController {
         println(boxes)
         boxes.forEach {
 
-            box ->
-            val workItem =ArtWorkItem()
-            workItem.movieUrl = box.attr("href")
 
-            val photo = box.allElements.find {
+            val workItem =ArtWorkItem()
+            workItem.movieUrl = it.attr("href")
+
+            val photo = it.allElements.find {
 
                 it.className() == "photo-frame"
             }?.allElements?.find {
@@ -357,7 +357,7 @@ class PhotoController {
             workItem.photoUrl = photo?.attr("src")
             workItem.title = photo?.attr("title")
 
-            val content = box.allElements.find {
+            val content = it.allElements.find {
                 it.className() == "photo-info"
             }
 
