@@ -372,15 +372,14 @@ class PhotoController {
             list.add(workItem)
 
 
-            return list
 
 
         }
 
 
 
-
         return list
+
 
     }
 
