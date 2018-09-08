@@ -28,6 +28,18 @@ class PhotoController {
         return document.text()
 
 
+
+    }
+    @RequestMapping("/test2")
+    fun tes2t():String{
+
+        val document =  Jsoup.connect("https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=28421388172&lang=zh&img=https://pics.javbus.com/cover/4yov_b.jpg&uc=0&floor=845").get()
+
+        println(document)
+        return document.text()
+
+
+
     }
 
     @RequestMapping("/download/{page}")
