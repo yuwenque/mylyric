@@ -335,11 +335,20 @@ class PhotoController {
 
     @RequestMapping("/actress")
     fun getArtworkListOfActress(@RequestParam(name = "id") id: String,@RequestParam("page")page:Int):List<ArtWorkItem>{
+        val list = ArrayList<ArtWorkItem>()
 
         val redirectUrl = SEARCH_URL.plus("star/$id/$page")
-        val document = Jsoup.connect(redirectUrl).get()
+        lateinit var document:Document
 
-        val list = ArrayList<ArtWorkItem>()
+        try{
+             document = Jsoup.connect(redirectUrl).get()
+
+        }catch (e:Exception){
+            e.printStackTrace()
+
+            return list
+        }
+
 
         val boxes =  document.getElementsByClass("movie-box")
         println(boxes)
