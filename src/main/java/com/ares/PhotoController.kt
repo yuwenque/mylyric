@@ -332,7 +332,56 @@ class PhotoController {
 
 
 
-    @RequestMapping("/getDetail")
+    @RequestMapping("/actress")
+    fun getArtworkListOfActress(@RequestParam(name = "id") id: String):List<ArtWorkItem>{
+
+        val redirectUrl = SEARCH_URL.plus("star/$id")
+        val document = Jsoup.connect(redirectUrl).get()
+
+        val list = ArrayList<ArtWorkItem>()
+
+        document.getElementsByClass("movie-box").forEach {
+
+            box ->
+            val workItem =ArtWorkItem()
+            workItem.movieUrl = box.attr("href")
+
+            val photo = box.allElements.find {
+
+                it.className() == "photo-frame"
+            }?.allElements?.find {
+                it.hasAttr("src")
+            }
+            workItem.photoUrl = photo?.attr("src")
+            workItem.title = photo?.attr("title")
+
+            val content = box.allElements.find {
+                it.className() == "photo-info"
+            }
+
+            val contentList = content?.getElementsByTag("date")
+
+            workItem.content = content?.getElementsByTag("span")?.first()?.text()
+            workItem.code = contentList?.first()?.text()
+            workItem.date = contentList?.last()?.text()
+
+
+            list.add(workItem)
+
+
+            return list
+
+
+        }
+
+
+
+
+        return list
+
+    }
+
+
     fun getActWorkList(@RequestParam(name = "redirectUrl") redirectUrl: String): ActressDetail {
 
         if (redirectUrl.isEmpty()) {

@@ -25,4 +25,6 @@ interface ArtworkApi {
 
     @GET("/artwork/{code}")
     fun searchArtWork(@Path("code") code: String): Observable<MovieSearchItem>
+
+    
 }
