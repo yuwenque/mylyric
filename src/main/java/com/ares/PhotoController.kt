@@ -340,7 +340,9 @@ class PhotoController {
 
         val list = ArrayList<ArtWorkItem>()
 
-        document.getElementsByClass("movie-box").forEach {
+        val boxes =  document.getElementsByClass("movie-box")
+        println(boxes)
+        boxes.forEach {
 
             box ->
             val workItem =ArtWorkItem()
