@@ -205,33 +205,38 @@ class PhotoController {
 
             val relateEle = document.getElementById("related-waterfall")
             val relateList = ArrayList<SimpleMovieItem>()
-            relateEle.getElementsByClass("movie-box").forEach {
+            if(relateEle!=null){
+
+                relateEle.getElementsByClass("movie-box").forEach {
 
 
-              val url =   it.attr("href")
-              val title =   it.attr("title")
+                    val url =   it.attr("href")
+                    val title =   it.attr("title")
 
-               val imgEle=it.allElements.filter {
-                    it.tagName() =="img"
+                    val imgEle=it.allElements.filter {
+                        it.tagName() =="img"
+                    }
+                    if(imgEle.isNotEmpty()){
+                        println("-------imgEle--------")
+
+
+                        val src = imgEle[0].attr("src")
+                        println("relate url=$url,title=$title,src=$src")
+                        println("---------------")
+                        val item = SimpleMovieItem()
+                        item.title = title
+                        item.url =url
+                        item.coverPhotoUrl=src
+                        item.code = item.url?.split("/")?.last()
+
+                        relateList.add(item)
+                    }
+
                 }
-                if(imgEle.isNotEmpty()){
-                    println("-------imgEle--------")
-
-
-                    val src = imgEle[0].attr("src")
-                    println("relate url=$url,title=$title,src=$src")
-                    println("---------------")
-                    val item = SimpleMovieItem()
-                    item.title = title
-                    item.url =url
-                    item.coverPhotoUrl=src
-                    item.code = item.url?.split("/")?.last()
-
-                    relateList.add(item)
-                }
+                movieSearchItem.relateArtWorkList = relateList
 
             }
-            movieSearchItem.relateArtWorkList = relateList
+
 
 
 
