@@ -24,7 +24,21 @@ class PhotoController {
 
         val document =  Jsoup.connect("https://www.javbus.com/SCOP-321").get()
 
+        document.getElementsByTag("script")
         println(document)
+        return document.text()
+
+
+
+    }
+
+    @RequestMapping("/test3")
+    fun test3():String{
+
+        val document =  Jsoup.connect("https://www.javbus.com/SCOP-321").get()
+
+       val sriEle= document.getElementsByTag("script")
+        println(sriEle)
         return document.text()
 
 
