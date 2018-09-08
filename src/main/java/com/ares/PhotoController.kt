@@ -22,7 +22,7 @@ class PhotoController {
     @RequestMapping("/test")
     fun test():String{
 
-        val document =  Jsoup.connect("").get()
+        val document =  Jsoup.connect("https://www.javbus.com/SCOP-321").get()
 
         println(document)
         return document.text()
