@@ -365,6 +365,7 @@ class PhotoController {
             workItem.code = contentList?.first()?.text()
             workItem.date = contentList?.last()?.text()
 
+            println(workItem)
 
             list.add(workItem)
 

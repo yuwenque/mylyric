@@ -1,7 +1,7 @@
 #!/bin/sh/ 
 # 将更新内容推送到服务器
 git add .
-git commit -m "test fixed"
+git commit -m "code update"
 git push 
 # 登录远程，执行更新脚本
 ssh root@ares-space.com -p 29082 sh /opt/myapp/mylyric/updateAndRedeploy.sh
