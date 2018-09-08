@@ -38,7 +38,12 @@ class PhotoController {
         val document =  Jsoup.connect("https://www.javbus.com/SCOP-321").get()
 
        val sriEle= document.getElementsByTag("script")
-        println(sriEle)
+       var tar = sriEle.filter {
+
+            it.getElementsContainingText("gid").size >0
+
+        }
+        println(tar)
         return document.text()
 
 
