@@ -1,12 +1,14 @@
 package com.ares
 
 import com.ares.entity.*
+import io.reactivex.Observable
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import retrofit2.http.Path
 import retrofit2.http.Query
 import java.io.*
 
@@ -17,6 +19,47 @@ import java.util.concurrent.Executors
 @RestController
 @RequestMapping("/artwork")
 class PhotoController {
+
+    @RequestMapping("/video/{code}")
+    fun searchArtWorkVideo(@PathVariable(required = true) code: String): ArrayList<VideoSearchItem>{
+
+        val searchList = ArrayList<VideoSearchItem>()
+        val document = Jsoup.connect("https://www.torrentkitty.tv/search/$code").get()
+        val trs =   document.getElementsByTag("tr")
+         trs.forEach {
+             val tds = it.getElementsByTag("td")
+             val videoItem = VideoSearchItem()
+             tds.forEach {
+
+                 when (it.className()) {
+                     "name" -> videoItem.name = it.text()
+                     "size" -> videoItem.size = it.text()
+                     "date" -> videoItem.date = it.text()
+                     "action" -> {
+
+                         val a = it.getElementsByAttributeValueContaining("href", "magnet")
+                         if (a.size > 0) {
+
+                             val href = a[0].attr("href")
+                             videoItem.magnet = href
+                             println("----")
+                             println(videoItem)
+                             searchList.add(videoItem)
+                         }
+
+
+                     }
+                 }
+
+
+             }
+
+
+    }
+        return searchList
+
+    }
+
 
 
     @RequestMapping("/test")
@@ -109,6 +152,8 @@ class PhotoController {
         }
 
     }
+
+
     @RequestMapping("/{code}")
     fun test(@PathVariable(required = true) code:String):MovieSearchItem{
 

@@ -1,9 +1,6 @@
 package com.ares.http
 
-import com.ares.entity.Actress
-import com.ares.entity.ActressDetail
-import com.ares.entity.BaseSearchItem
-import com.ares.entity.MovieSearchItem
+import com.ares.entity.*
 import io.reactivex.Observable
 import retrofit2.http.Field
 import retrofit2.http.GET
@@ -26,5 +23,7 @@ interface ArtworkApi {
     @GET("/artwork/{code}")
     fun searchArtWork(@Path("code") code: String): Observable<MovieSearchItem>
 
-    
+    @GET("/artwork/video/{code}")
+    fun searchArtWorkVideo(@Path("code") code: String): Observable<List<VideoSearchItem>>
+
 }
