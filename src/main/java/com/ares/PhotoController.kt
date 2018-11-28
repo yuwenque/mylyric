@@ -20,6 +20,8 @@ import java.util.concurrent.Executors
 @RequestMapping("/artwork")
 class PhotoController {
 
+
+
     @RequestMapping("/video/{code}")
     fun searchArtWorkVideo(@PathVariable(required = true) code: String): ArrayList<VideoSearchItem>{
 
@@ -70,9 +72,6 @@ class PhotoController {
         document.getElementsByTag("script")
         println(document)
         return document.text()
-
-
-
     }
 
     @RequestMapping("/test3")
@@ -294,6 +293,26 @@ class PhotoController {
         return movieSearchItem
     }
 
+    @RequestMapping("/main/{page}")
+    fun getMainPage(@PathVariable(required = false) page:Int=0): List<BaseSearchItem>{
+        val list = ArrayList<BaseSearchItem>()
+        val url = if(page==0){
+            SEARCH_URL
+        }else{
+            SEARCH_URL.plus("page/").plus(page)
+        }
+        println("搜索路径 = $url")
+        try {
+            val document = Jsoup.connect(url).get()
+            println(document)
+            list.addAll(getActWorkItems(document))
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return list
+
+    }
     @RequestMapping("/search/{keyword}/{page}")
     fun search(@PathVariable keyword: String, @PathVariable page: Int = 1, @RequestParam(name = "type", required = false) type: Int = SEARCH_ARTWORK): List<BaseSearchItem> {
 
