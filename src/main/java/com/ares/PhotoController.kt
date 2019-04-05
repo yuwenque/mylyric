@@ -74,6 +74,8 @@ class PhotoController {
         return document.text()
     }
 
+
+
     @RequestMapping("/test3")
     fun test3():String{
 
@@ -151,6 +153,82 @@ class PhotoController {
         }
 
     }
+
+
+
+    @RequestMapping("/tags/{uncensored}")
+    fun getArtworkTags(@PathVariable("uncensored",required = false)uncensored:String): List<GenreBox>{
+
+        val url = if(uncensored=="uncensored"){
+            SEARCH_URL.plus("uncensored/").plus("genre")
+        }else{
+            SEARCH_URL.plus("genre")
+        }
+        val boxList = ArrayList<GenreBox>()
+
+        try {
+            val document = Jsoup.connect(url).get()
+
+           val h4EleList =  document.getElementsByTag("h4")
+            val genreBoxList  =  document.getElementsByClass("row genre-box")
+            for (h4 in h4EleList) {
+                val box = GenreBox()
+                box.theme = h4.text()
+                boxList.add(box)
+            }
+
+            for ((index, element) in genreBoxList.withIndex()) {
+
+
+                if(boxList.size>index){
+                    val aList = element.getElementsByTag("a")
+                    val tagList = ArrayList<GenreBox.Tag>()
+                    val box = boxList[index]
+                    for (a in aList) {
+                        val tag = GenreBox.Tag()
+                        tag.name =  a.text()
+                        tag.url = a.attr("href")
+                        tagList.add(tag)
+                    }
+
+                    box.tags = tagList
+                }
+
+
+            }
+
+        }catch (e:Exception){
+
+
+        }
+
+
+        return boxList
+
+    }
+
+
+    @RequestMapping("/tag/{tag}/{page}")
+    fun getTagArtwork(@PathVariable("tag") tag:String,@PathVariable("page")page:Int):List<BaseSearchItem>{
+
+        val url = if(page==0){
+            SEARCH_URL.plus(tag).plus("/").plus(1)
+        }else{
+            SEARCH_URL.plus(tag).plus("/").plus(page)
+        }
+        val list = ArrayList<BaseSearchItem>()
+        try {
+            val document = Jsoup.connect(url).get()
+            println(document)
+            list.addAll(getActWorkItems(document))
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return list
+
+    }
+
 
 
     @RequestMapping("/{code}")
@@ -295,13 +373,14 @@ class PhotoController {
 
     @RequestMapping("/main/{page}")
     fun getMainPage(@PathVariable(required = false) page:Int=0): List<BaseSearchItem>{
-        val list = ArrayList<BaseSearchItem>()
+
         val url = if(page==0){
             SEARCH_URL
         }else{
             SEARCH_URL.plus("page/").plus(page)
         }
         println("搜索路径 = $url")
+        val list = ArrayList<BaseSearchItem>()
         try {
             val document = Jsoup.connect(url).get()
             println(document)
@@ -311,8 +390,10 @@ class PhotoController {
         }
 
         return list
-
     }
+
+
+
     @RequestMapping("/search/{keyword}/{page}")
     fun search(@PathVariable keyword: String, @PathVariable page: Int = 1, @RequestParam(name = "type", required = false) type: Int = SEARCH_ARTWORK): List<BaseSearchItem> {
 

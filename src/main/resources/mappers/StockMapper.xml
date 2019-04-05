@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ares.mapper.StockMapper" >
+
+
+
+    <resultMap id="AddStock" type="com.ares.entity.stock.StockAdd" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="vol_on_up" property="vol_on_up" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="Stock925" type="com.ares.entity.stock.Stock925" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="call_auction" property="callAuction" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="insertStock" parameterType="com.ares.entity.stock.StockAdd">
+
+        insert  into stock_yes(id,name,vol_on_up,create_time) values(#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{vol_on_up,jdbcType=BIGINT},#{create_time,jdbcType=VARCHAR})
+
+    </insert>
+
+    <insert id="insertStock925" parameterType="com.ares.entity.stock.Stock925">
+
+        insert  into stock_925(id,name,call_auction,create_time) values(#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{call_auction,jdbcType=BIGINT},#{create_time,jdbcType=VARCHAR})
+
+    </insert>
+
+    <delete id="deleteStockAdd" parameterType="java.lang.String">
+
+        delete from stock_add where id =#{id,jdbcType=VARCHAR}
+
+
+    </delete>
+
+    <select id="queryAddStock" parameterType="java.lang.String">
+
+
+        select * from stock_add where create_time = #{date,jdbcType=VARCHAR}
+
+    </select>
+
+</mapper>
