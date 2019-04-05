@@ -31,15 +31,20 @@
 
     <delete id="deleteStockAdd" parameterType="java.lang.String">
 
-        delete from stock_add where id =#{id,jdbcType=VARCHAR}
+        delete from stock_yes where id =#{id,jdbcType=VARCHAR}
 
 
     </delete>
+    <select id="queryAddStock" resultMap="AddStock">
 
-    <select id="queryAddStock" parameterType="java.lang.String">
+
+        select * from stock_yes where create_time = #{date,jdbcType=VARCHAR}
+    </select>
+
+    <select id="checkStock925"  resultMap="Stock925">
 
 
-        select * from stock_add where create_time = #{date,jdbcType=VARCHAR}
+        select * from stock_925 where id= #{id,jdbcType=VARCHAR} and  create_time = #{date,jdbcType=VARCHAR}
 
     </select>
 
