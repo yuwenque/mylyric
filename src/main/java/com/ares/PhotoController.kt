@@ -216,6 +216,8 @@ class PhotoController {
         }else{
             tagUrl.plus("/").plus(page)
         }
+
+        println("开始获取$url")
         val list = ArrayList<BaseSearchItem>()
         try {
             val document = Jsoup.connect(url).get()
