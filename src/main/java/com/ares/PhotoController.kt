@@ -208,13 +208,13 @@ class PhotoController {
     }
 
 
-    @RequestMapping("/tag/{tag}/{page}")
-    fun getTagArtwork(@PathVariable("tag") tag:String,@PathVariable("page")page:Int):List<BaseSearchItem>{
+    @RequestMapping("/tag/{page}")
+    fun getTagArtwork(@RequestParam("tagUrl") tagUrl:String, @PathVariable("page")page:Int):List<BaseSearchItem>{
 
         val url = if(page==0){
-            SEARCH_URL.plus(tag).plus("/").plus(1)
+            tagUrl.plus("/").plus(1)
         }else{
-            SEARCH_URL.plus(tag).plus("/").plus(page)
+            tagUrl.plus("/").plus(page)
         }
         val list = ArrayList<BaseSearchItem>()
         try {
