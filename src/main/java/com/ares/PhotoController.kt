@@ -22,6 +22,7 @@ class PhotoController {
 
 
 
+
     @RequestMapping("/video/{code}")
     fun searchArtWorkVideo(@PathVariable(required = true) code: String): ArrayList<VideoSearchItem>{
 
@@ -67,7 +68,7 @@ class PhotoController {
     @RequestMapping("/test")
     fun test():String{
 
-        val document =  Jsoup.connect("https://www.javbus.com/SCOP-321").get()
+        val document =  Jsoup.connect(SEARCH_URL.plus("SCOP-321")).get()
 
         document.getElementsByTag("script")
         println(document)
@@ -79,7 +80,7 @@ class PhotoController {
     @RequestMapping("/test3")
     fun test3():String{
 
-        val document =  Jsoup.connect("https://www.javbus.com/SCOP-321").get()
+        val document =  Jsoup.connect(SEARCH_URL.plus("SCOP-321")).get()
 
        val sriEle= document.getElementsByTag("script")
        var tar = sriEle.filter {
@@ -96,7 +97,7 @@ class PhotoController {
     @RequestMapping("/test2")
     fun tes2t():String{
 
-        val document =  Jsoup.connect("https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=28421388172&lang=zh&img=https://pics.javbus.com/cover/4yov_b.jpg&uc=0&floor=845").get()
+        val document =  Jsoup.connect(SEARCH_URL.plus("ajax/uncledatoolsbyajax.php?gid=28421388172&lang=zh&img=https://pics.javbus.com/cover/4yov_b.jpg&uc=0&floor=845")).get()
 
         println(document)
         return document.text()
@@ -508,7 +509,8 @@ class PhotoController {
 
     companion object {
 
-        const val SEARCH_URL = "https://www.javbus.com/"
+//        const val SEARCH_URL = "https://www.javbus.com/"
+        const val SEARCH_URL = "https://www.fanbus.co/"
 
         //模糊
         const val SEARCH_ARTWORK = 0
@@ -658,7 +660,7 @@ class PhotoController {
     fun getActressList(@PathVariable page: Int): List<Actress> {
 
 
-        val url = "https://www.javbus.com/actresses/$page"
+        val url = SEARCH_URL.plus("actresses/$page")
         val list = ArrayList<Actress>()
 
         try {
